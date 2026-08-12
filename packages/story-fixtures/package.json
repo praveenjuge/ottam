@@ -17,5 +17,8 @@
   },
   "dependencies": {
     "@ottam/story-contract": "workspace:*"
+  },
+  "devDependencies": {
+    "@ottam/story-compiler": "workspace:*"
   }
 }

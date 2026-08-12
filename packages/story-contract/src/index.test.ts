@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  episodeManifestSchema,
   durationMinutesSchema,
   movementStateSchema,
   sceneDurationSecondsSchema,
@@ -34,5 +35,34 @@ describe("story contract foundation", () => {
     expect(storyDensitySchema.parse(0.3)).toBe(0.3);
     expect(storyDensitySchema.parse(0.4)).toBe(0.4);
     expect(() => storyDensitySchema.parse(0.5)).toThrow();
+  });
+
+  it("rejects duplicate scene keys before compilation", () => {
+    const audio = {
+      bytes: 1,
+      checksumSha256: "0".repeat(64),
+      durationSeconds: 20,
+      immutableKey: "fixture.m4a",
+      mimeType: "audio/mp4" as const,
+    };
+    const scene = {
+      audio: { default: audio },
+      durationSeconds: 20,
+      kind: "core" as const,
+      script: "You hear a signal.",
+      sortOrder: 0,
+      stableKey: "opening",
+      title: "Opening",
+    };
+    expect(() =>
+      episodeManifestSchema.parse({
+        contractVersion: 1,
+        episodeId: "episode",
+        releaseId: "release",
+        revisionId: "revision",
+        scenes: [scene, { ...scene, sortOrder: 1 }],
+        title: "Fixture",
+      }),
+    ).toThrow(/Duplicate scene key/);
   });
 });
