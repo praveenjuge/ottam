@@ -1,0 +1,15 @@
+node_modules/
+.turbo/
+dist/
+coverage/
+.next/
+*.tsbuildinfo
+.DS_Store
+
+# Package-local secrets and machine state
+.env
+.env.*
+!.env.example
+DerivedData/
+*.xcuserdata/
+*.xcuserstate

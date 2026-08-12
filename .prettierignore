@@ -1,0 +1,6 @@
+.next
+.turbo
+bun.lock
+coverage
+dist
+DerivedData

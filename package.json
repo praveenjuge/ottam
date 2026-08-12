@@ -1,0 +1,32 @@
+{
+  "name": "ottam",
+  "private": true,
+  "packageManager": "bun@1.3.14",
+  "engines": {
+    "bun": ">=1.3.14"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "verify": "turbo run lint typecheck test build"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "26.2.0",
+    "eslint": "10.0.2",
+    "eslint-config-prettier": "10.1.8",
+    "globals": "16.4.0",
+    "prettier": "3.9.0",
+    "turbo": "2.10.9",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.67.0",
+    "vitest": "4.1.0"
+  }
+}
