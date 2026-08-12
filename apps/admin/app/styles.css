@@ -407,6 +407,68 @@ p {
   }
 }
 
+.audio-proposal {
+  display: grid;
+  gap: 0.8rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--panel) 88%, var(--accent));
+}
+
+.audio-cost {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.audio-cost span,
+.audio-proposal dt,
+.audio-proposal article > span,
+.candidate-loading {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.audio-proposal dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.audio-proposal dl div {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.audio-proposal dd {
+  margin: 0;
+}
+
+.audio-proposal article,
+.audio-proposal pre {
+  padding: 0.75rem;
+  border-radius: 0.7rem;
+  background: var(--surface);
+}
+
+.audio-proposal article p {
+  margin: 0.35rem 0 0;
+  white-space: pre-wrap;
+}
+
+.audio-proposal pre {
+  margin: 0;
+  overflow-x: auto;
+  font-size: 0.75rem;
+}
+
+.candidate-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: var(--font-sans);

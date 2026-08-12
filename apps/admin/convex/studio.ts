@@ -47,42 +47,58 @@ export const workspace = query({
         message: "Episode not found.",
       });
     }
-    const [series, scenes, audioAssets, chat, revisions, changeSets] =
-      await Promise.all([
-        ctx.db.get(episode.seriesId),
-        ctx.db
-          .query("scenes")
-          .withIndex("by_episode_and_order", (queryBuilder) =>
-            queryBuilder.eq("episodeId", args.episodeId),
-          )
-          .collect(),
-        ctx.db
-          .query("audioAssets")
-          .withIndex("by_episode_and_status", (queryBuilder) =>
-            queryBuilder.eq("episodeId", args.episodeId),
-          )
-          .collect(),
-        ctx.db
-          .query("productionChats")
-          .withIndex("by_episode", (queryBuilder) =>
-            queryBuilder.eq("episodeId", args.episodeId),
-          )
-          .unique(),
-        ctx.db
-          .query("episodeRevisions")
-          .withIndex("by_episode_and_number", (queryBuilder) =>
-            queryBuilder.eq("episodeId", args.episodeId),
-          )
-          .order("desc")
-          .take(20),
-        ctx.db
-          .query("changeSets")
-          .withIndex("by_episode_and_created", (queryBuilder) =>
-            queryBuilder.eq("episodeId", args.episodeId),
-          )
-          .order("desc")
-          .take(30),
-      ]);
+    const [
+      series,
+      scenes,
+      audioAssets,
+      voices,
+      chat,
+      revisions,
+      changeSets,
+      toolInvocations,
+    ] = await Promise.all([
+      ctx.db.get(episode.seriesId),
+      ctx.db
+        .query("scenes")
+        .withIndex("by_episode_and_order", (queryBuilder) =>
+          queryBuilder.eq("episodeId", args.episodeId),
+        )
+        .collect(),
+      ctx.db
+        .query("audioAssets")
+        .withIndex("by_episode_and_status", (queryBuilder) =>
+          queryBuilder.eq("episodeId", args.episodeId),
+        )
+        .collect(),
+      ctx.db.query("voices").collect(),
+      ctx.db
+        .query("productionChats")
+        .withIndex("by_episode", (queryBuilder) =>
+          queryBuilder.eq("episodeId", args.episodeId),
+        )
+        .unique(),
+      ctx.db
+        .query("episodeRevisions")
+        .withIndex("by_episode_and_number", (queryBuilder) =>
+          queryBuilder.eq("episodeId", args.episodeId),
+        )
+        .order("desc")
+        .take(20),
+      ctx.db
+        .query("changeSets")
+        .withIndex("by_episode_and_created", (queryBuilder) =>
+          queryBuilder.eq("episodeId", args.episodeId),
+        )
+        .order("desc")
+        .take(30),
+      ctx.db
+        .query("toolInvocations")
+        .withIndex("by_episode_and_started", (queryBuilder) =>
+          queryBuilder.eq("episodeId", args.episodeId),
+        )
+        .order("desc")
+        .take(30),
+    ]);
     const messages = chat
       ? await ctx.db
           .query("chatMessages")
@@ -100,6 +116,8 @@ export const workspace = query({
       revisions,
       scenes,
       series,
+      toolInvocations,
+      voices: voices.filter((voice) => voice.status === "approved"),
     };
   },
 });

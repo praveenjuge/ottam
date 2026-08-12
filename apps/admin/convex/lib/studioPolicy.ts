@@ -126,7 +126,11 @@ export type ToolDecision =
   | { type: "user-approval" };
 
 export function decideStudioTool(toolName: string): ToolDecision {
-  if (readOnlyTools.has(toolName) || toolName === "proposeChangeSet") {
+  if (
+    readOnlyTools.has(toolName) ||
+    toolName === "proposeChangeSet" ||
+    toolName === "proposeAudioGeneration"
+  ) {
     return { type: "allow" };
   }
   if (approvalTools.has(toolName)) {

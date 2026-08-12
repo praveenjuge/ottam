@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@ai-sdk/react": "^4.0.65",
+    "@aws-sdk/client-s3": "^3.1108.0",
+    "@aws-sdk/s3-request-presigner": "^3.1108.0",
     "@clerk/nextjs": "7.7.4",
     "@noble/hashes": "^2.3.0",
     "@ottam/story-compiler": "workspace:*",

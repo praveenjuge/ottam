@@ -53,6 +53,9 @@ import {
 } from "@/components/ai-elements/tool";
 import { Button } from "@/components/ui/button";
 import type { ProductionMessage } from "@/lib/production-agent";
+import { generationRequestSchema } from "@/lib/media/generation-contract";
+import { AudioGenerationDiff } from "./audio-generation-diff";
+import { CandidateAudio } from "./candidate-audio";
 import { ChangeDiff } from "./change-diff";
 
 type Workspace = FunctionReturnType<typeof api.studio.workspace>;
@@ -80,6 +83,28 @@ const applyInputSchema = {
     };
   },
 };
+
+function audioToolInput(part: StudioToolPart): {
+  requestHash: string;
+  toolInvocationId: Id<"toolInvocations">;
+} | null {
+  if (!part.type.endsWith("generateAudioCandidates")) return null;
+  const value = "input" in part ? part.input : undefined;
+  if (
+    value === null ||
+    typeof value !== "object" ||
+    !("requestHash" in value) ||
+    !("toolInvocationId" in value) ||
+    typeof value.requestHash !== "string" ||
+    typeof value.toolInvocationId !== "string"
+  ) {
+    throw new Error("Invalid audio generation input.");
+  }
+  return {
+    requestHash: value.requestHash,
+    toolInvocationId: value.toolInvocationId as Id<"toolInvocations">,
+  };
+}
 
 function persistedMessages(workspace: Workspace): ProductionMessage[] {
   return workspace.messages.map(
@@ -113,32 +138,58 @@ function StudioTool({
 }) {
   const approveChangeSet = useAction(api.studioActions.approveChangeSet);
   const rejectChangeSet = useAction(api.studioActions.rejectChangeSet);
+  const approveAudio = useAction(api.mediaActions.approveAudioGeneration);
+  const rejectAudio = useAction(api.mediaActions.rejectAudioGeneration);
   const [decisionPending, setDecisionPending] = useState(false);
   const proposal = proposalForApply(part, workspace);
+  const audioInput = audioToolInput(part);
+  const audioInvocation = audioInput
+    ? workspace.toolInvocations.find(
+        (invocation) => invocation._id === audioInput.toolInvocationId,
+      )
+    : undefined;
+  const audioRequest = audioInvocation
+    ? generationRequestSchema.parse(
+        JSON.parse(audioInvocation.inputJson) as unknown,
+      )
+    : undefined;
+  const voice = audioRequest
+    ? workspace.voices.find(
+        (candidate) => candidate._id === audioRequest.voiceId,
+      )
+    : undefined;
 
   async function decide(approved: boolean) {
-    if (
-      !part.type.endsWith("applyChangeSet") ||
-      part.state !== "approval-requested" ||
-      part.approval.isAutomatic
-    ) {
+    if (part.state !== "approval-requested" || part.approval.isAutomatic) {
       return;
     }
-    const input = applyInputSchema.parse(
-      "input" in part ? part.input : undefined,
-    );
     setDecisionPending(true);
     try {
-      if (approved) {
-        await approveChangeSet({
-          changeSetId: input.changeSetId,
-          expectedEpisodeId: episodeId,
-          expectedProposalHash: input.expectedProposalHash,
-        });
+      if (part.type.endsWith("applyChangeSet")) {
+        const input = applyInputSchema.parse(
+          "input" in part ? part.input : undefined,
+        );
+        if (approved) {
+          await approveChangeSet({
+            changeSetId: input.changeSetId,
+            expectedEpisodeId: episodeId,
+            expectedProposalHash: input.expectedProposalHash,
+          });
+        } else {
+          await rejectChangeSet({ changeSetId: input.changeSetId });
+        }
+      } else if (audioInput) {
+        if (approved) {
+          await approveAudio({
+            episodeId,
+            requestHash: audioInput.requestHash,
+            toolInvocationId: audioInput.toolInvocationId,
+          });
+        } else {
+          await rejectAudio({ toolInvocationId: audioInput.toolInvocationId });
+        }
       } else {
-        await rejectChangeSet({
-          changeSetId: input.changeSetId,
-        });
+        throw new Error("This tool does not support human approval.");
       }
       await respond({ approved, id: part.approval.id });
     } finally {
@@ -160,6 +211,11 @@ function StudioTool({
       <ToolContent>
         {proposal ? (
           <ChangeDiff proposal={proposal} />
+        ) : audioRequest ? (
+          <AudioGenerationDiff
+            request={audioRequest}
+            voiceName={voice?.displayName ?? "Approved library voice"}
+          />
         ) : (
           <ToolInput input={part.input} />
         )}
@@ -385,6 +441,25 @@ function Inspector({ workspace }: { workspace: Workspace }) {
               <small>{changeSet.status}</small>
             </Button>
           ))
+        )}
+      </section>
+      <section className="candidate-list">
+        <h2>Audio candidates</h2>
+        {workspace.audioAssets.filter((asset) => asset.status === "candidate")
+          .length === 0 ? (
+          <p>No generated candidates.</p>
+        ) : (
+          workspace.audioAssets
+            .filter((asset) => asset.status === "candidate")
+            .map((asset) => (
+              <article key={asset._id}>
+                <span>{asset.immutableKey.split("/").at(-1)}</span>
+                <CandidateAudio
+                  assetId={asset._id}
+                  episodeId={workspace.episode._id}
+                />
+              </article>
+            ))
         )}
       </section>
     </aside>

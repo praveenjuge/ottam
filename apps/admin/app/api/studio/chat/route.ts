@@ -88,7 +88,7 @@ export async function POST(request: Request): Promise<Response> {
 
     const runId = `run_${nanoid(20)}`;
     const model = getStudioModelId();
-    await client.action(api.studioActions.beginAgentRun, {
+    const agentRunId = await client.action(api.studioActions.beginAgentRun, {
       ...(workspace.episode.currentRevisionId
         ? { baseRevisionId: workspace.episode.currentRevisionId }
         : {}),
@@ -100,6 +100,7 @@ export async function POST(request: Request): Promise<Response> {
     let outputTokens = 0;
     const agent = createProductionAgent({
       actorSubject: session.userId,
+      agentRunId,
       client,
       episodeId,
     });

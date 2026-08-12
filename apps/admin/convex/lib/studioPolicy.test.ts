@@ -15,7 +15,13 @@ describe("production studio policy", () => {
   it("requires approval for side effects and denies unknown capabilities", () => {
     expect(decideStudioTool("readEpisode")).toEqual({ type: "allow" });
     expect(decideStudioTool("proposeChangeSet")).toEqual({ type: "allow" });
+    expect(decideStudioTool("proposeAudioGeneration")).toEqual({
+      type: "allow",
+    });
     expect(decideStudioTool("applyChangeSet")).toEqual({
+      type: "user-approval",
+    });
+    expect(decideStudioTool("generateAudioCandidates")).toEqual({
       type: "user-approval",
     });
     expect(decideStudioTool("publishEpisode").type).toBe("deny");

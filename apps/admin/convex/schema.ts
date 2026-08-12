@@ -216,6 +216,7 @@ export default defineSchema({
   toolInvocations: defineTable({
     agentRunId: v.id("agentRuns"),
     approvalRequired: v.boolean(),
+    baseRevisionId: v.id("episodeRevisions"),
     approvedAt: v.optional(v.number()),
     approvedBy: v.optional(v.string()),
     completedAt: v.optional(v.number()),
