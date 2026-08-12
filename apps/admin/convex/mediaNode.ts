@@ -68,13 +68,22 @@ export const generateAudioCandidates = action({
     const request = generationRequestSchema.parse(
       JSON.parse(invocation.inputJson) as unknown,
     );
-    const voice = await ctx.runQuery(internal.mediaInternal.voice, {
-      voiceId: request.voiceId as Id<"voices">,
-    });
-    if (voice?.status !== "approved") {
+    const [voice, scene] = await Promise.all([
+      ctx.runQuery(internal.mediaInternal.voice, {
+        voiceId: request.voiceId as Id<"voices">,
+      }),
+      ctx.runQuery(internal.mediaInternal.scene, {
+        sceneId: request.sceneId as Id<"scenes">,
+      }),
+    ]);
+    if (
+      voice?.status !== "approved" ||
+      scene?.episodeId !== args.episodeId ||
+      scene.script !== request.script
+    ) {
       throw new ConvexError({
-        code: "VOICE_UNAVAILABLE",
-        message: "The approved licensed voice is unavailable.",
+        code: "ASSET_UNAVAILABLE",
+        message: "The scene or approved licensed voice is unavailable.",
       });
     }
     const providerRequest = {
@@ -140,6 +149,7 @@ export const generateAudioCandidates = action({
         await ctx.runMutation(internal.mediaInternal.recordCandidate, {
           bytes: uploaded.bytes,
           checksumSha256: uploaded.checksum,
+          durationSeconds: scene.durationSeconds,
           episodeId: args.episodeId,
           immutableKey: key,
           jobId: claim.jobId,

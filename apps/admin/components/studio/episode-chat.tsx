@@ -54,9 +54,12 @@ import {
 import { Button } from "@/components/ui/button";
 import type { ProductionMessage } from "@/lib/production-agent";
 import { generationRequestSchema } from "@/lib/media/generation-contract";
+import { audioAssignmentSchema } from "@/lib/media/audio-assignment";
 import { AudioGenerationDiff } from "./audio-generation-diff";
+import { AudioAssignmentDiff } from "./audio-assignment-diff";
 import { CandidateAudio } from "./candidate-audio";
 import { ChangeDiff } from "./change-diff";
+import { ReleasePanel } from "./release-panel";
 
 type Workspace = FunctionReturnType<typeof api.studio.workspace>;
 type MessagePart = ProductionMessage["parts"][number];
@@ -106,6 +109,28 @@ function audioToolInput(part: StudioToolPart): {
   };
 }
 
+function assignmentToolInput(part: StudioToolPart): {
+  assignmentHash: string;
+  toolInvocationId: Id<"toolInvocations">;
+} | null {
+  if (!part.type.endsWith("applyAudioAssignment")) return null;
+  const value = "input" in part ? part.input : undefined;
+  if (
+    value === null ||
+    typeof value !== "object" ||
+    !("assignmentHash" in value) ||
+    !("toolInvocationId" in value) ||
+    typeof value.assignmentHash !== "string" ||
+    typeof value.toolInvocationId !== "string"
+  ) {
+    throw new Error("Invalid audio assignment input.");
+  }
+  return {
+    assignmentHash: value.assignmentHash,
+    toolInvocationId: value.toolInvocationId as Id<"toolInvocations">,
+  };
+}
+
 function persistedMessages(workspace: Workspace): ProductionMessage[] {
   return workspace.messages.map(
     (message) => JSON.parse(message.contentJson) as ProductionMessage,
@@ -140,9 +165,11 @@ function StudioTool({
   const rejectChangeSet = useAction(api.studioActions.rejectChangeSet);
   const approveAudio = useAction(api.mediaActions.approveAudioGeneration);
   const rejectAudio = useAction(api.mediaActions.rejectAudioGeneration);
+  const approveAssignment = useAction(api.mediaActions.approveAudioAssignment);
   const [decisionPending, setDecisionPending] = useState(false);
   const proposal = proposalForApply(part, workspace);
   const audioInput = audioToolInput(part);
+  const assignmentInput = assignmentToolInput(part);
   const audioInvocation = audioInput
     ? workspace.toolInvocations.find(
         (invocation) => invocation._id === audioInput.toolInvocationId,
@@ -151,6 +178,16 @@ function StudioTool({
   const audioRequest = audioInvocation
     ? generationRequestSchema.parse(
         JSON.parse(audioInvocation.inputJson) as unknown,
+      )
+    : undefined;
+  const assignmentInvocation = assignmentInput
+    ? workspace.toolInvocations.find(
+        (invocation) => invocation._id === assignmentInput.toolInvocationId,
+      )
+    : undefined;
+  const assignment = assignmentInvocation
+    ? audioAssignmentSchema.parse(
+        JSON.parse(assignmentInvocation.inputJson) as unknown,
       )
     : undefined;
   const voice = audioRequest
@@ -177,6 +214,18 @@ function StudioTool({
           });
         } else {
           await rejectChangeSet({ changeSetId: input.changeSetId });
+        }
+      } else if (assignmentInput) {
+        if (approved) {
+          await approveAssignment({
+            assignmentHash: assignmentInput.assignmentHash,
+            episodeId,
+            toolInvocationId: assignmentInput.toolInvocationId,
+          });
+        } else {
+          await rejectAudio({
+            toolInvocationId: assignmentInput.toolInvocationId,
+          });
         }
       } else if (audioInput) {
         if (approved) {
@@ -211,6 +260,8 @@ function StudioTool({
       <ToolContent>
         {proposal ? (
           <ChangeDiff proposal={proposal} />
+        ) : assignment ? (
+          <AudioAssignmentDiff assignment={assignment} />
         ) : audioRequest ? (
           <AudioGenerationDiff
             request={audioRequest}
@@ -426,6 +477,7 @@ function Inspector({ workspace }: { workspace: Workspace }) {
           15–60 min validation
         </CheckpointTrigger>
       </Checkpoint>
+      <ReleasePanel episodeId={workspace.episode._id} />
       <section className="proposal-list">
         <h2>Recent proposals</h2>
         {workspace.changeSets.length === 0 ? (

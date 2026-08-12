@@ -18,10 +18,16 @@ describe("production studio policy", () => {
     expect(decideStudioTool("proposeAudioGeneration")).toEqual({
       type: "allow",
     });
+    expect(decideStudioTool("proposeAudioAssignment")).toEqual({
+      type: "allow",
+    });
     expect(decideStudioTool("applyChangeSet")).toEqual({
       type: "user-approval",
     });
     expect(decideStudioTool("generateAudioCandidates")).toEqual({
+      type: "user-approval",
+    });
+    expect(decideStudioTool("applyAudioAssignment")).toEqual({
       type: "user-approval",
     });
     expect(decideStudioTool("publishEpisode").type).toBe("deny");

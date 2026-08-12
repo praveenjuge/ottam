@@ -115,7 +115,7 @@ export const readOnlyTools = new Set([
 
 export const approvalTools = new Set([
   "applyChangeSet",
-  "approveAudioAssignment",
+  "applyAudioAssignment",
   "generateAudioCandidates",
   "restoreRevision",
 ]);
@@ -129,6 +129,7 @@ export function decideStudioTool(toolName: string): ToolDecision {
   if (
     readOnlyTools.has(toolName) ||
     toolName === "proposeChangeSet" ||
+    toolName === "proposeAudioAssignment" ||
     toolName === "proposeAudioGeneration"
   ) {
     return { type: "allow" };

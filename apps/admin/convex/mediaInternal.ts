@@ -9,6 +9,10 @@ import {
 } from "./_generated/server";
 import { stableJson } from "./lib/studioPolicy";
 import { generationRequestSchema } from "../lib/media/generation-contract";
+import {
+  audioAssignmentSchema,
+  type AudioAssignment,
+} from "../lib/media/audio-assignment";
 
 const actorArgs = { actorSubject: v.string() };
 
@@ -35,6 +39,111 @@ async function writeAudit(
     targetId: args.targetId,
   });
 }
+
+function storedVariant(assignment: AudioAssignment) {
+  return assignment.variant === "default" ? undefined : assignment.variant;
+}
+
+async function assignedAsset(ctx: MutationCtx, assignment: AudioAssignment) {
+  const assets = await ctx.db
+    .query("audioAssets")
+    .withIndex("by_scene", (queryBuilder) =>
+      queryBuilder.eq("sceneId", assignment.sceneId as Id<"scenes">),
+    )
+    .collect();
+  const variant = storedVariant(assignment);
+  return assets.find(
+    (asset) => asset.status === "approved" && asset.variant === variant,
+  );
+}
+
+export const proposeAudioAssignment = internalMutation({
+  args: {
+    ...actorArgs,
+    agentRunId: v.id("agentRuns"),
+    assignmentJson: v.string(),
+    assignmentHash: v.string(),
+  },
+  returns: v.object({
+    assignmentHash: v.string(),
+    toolInvocationId: v.id("toolInvocations"),
+  }),
+  handler: async (ctx, args) => {
+    const assignment = audioAssignmentSchema.parse(
+      JSON.parse(args.assignmentJson) as unknown,
+    );
+    const [run, episode, scene, candidate] = await Promise.all([
+      ctx.db.get(args.agentRunId),
+      ctx.db.get(assignment.episodeId as Id<"episodes">),
+      ctx.db.get(assignment.sceneId as Id<"scenes">),
+      ctx.db.get(assignment.assetId as Id<"audioAssets">),
+    ]);
+    if (
+      run?.episodeId !== assignment.episodeId ||
+      episode?.currentRevisionId !== assignment.baseRevisionId ||
+      scene?.episodeId !== assignment.episodeId ||
+      candidate?.episodeId !== assignment.episodeId ||
+      candidate.sceneId !== assignment.sceneId ||
+      candidate.status !== "candidate"
+    ) {
+      throw new ConvexError({
+        code: "INVALID_ASSIGNMENT",
+        message: "Audio assignment is outside the current episode state.",
+      });
+    }
+    if ((scene.kind === "reactive") !== (assignment.variant !== "default")) {
+      throw new ConvexError({
+        code: "INVALID_VARIANT",
+        message: "Reactive scenes require walking or running audio.",
+      });
+    }
+    const current = await assignedAsset(ctx, assignment);
+    if ((current?._id ?? null) !== assignment.beforeAssetId) {
+      throw new ConvexError({
+        code: "STALE_ASSIGNMENT",
+        message: "The current assignment changed before proposal.",
+      });
+    }
+    const expectedHash = hash(assignment);
+    if (expectedHash !== args.assignmentHash) {
+      throw new ConvexError({
+        code: "INVALID_HASH",
+        message: "Audio assignment hash mismatch.",
+      });
+    }
+    const existing = await ctx.db
+      .query("toolInvocations")
+      .withIndex("by_idempotency_key", (queryBuilder) =>
+        queryBuilder.eq("idempotencyKey", args.assignmentHash),
+      )
+      .unique();
+    if (existing) {
+      return {
+        assignmentHash: args.assignmentHash,
+        toolInvocationId: existing._id,
+      };
+    }
+    const toolInvocationId = await ctx.db.insert("toolInvocations", {
+      agentRunId: args.agentRunId,
+      approvalRequired: true,
+      baseRevisionId: assignment.baseRevisionId as Id<"episodeRevisions">,
+      episodeId: assignment.episodeId as Id<"episodes">,
+      idempotencyKey: args.assignmentHash,
+      inputJson: args.assignmentJson,
+      startedAt: Date.now(),
+      status: "proposed",
+      toolName: "applyAudioAssignment",
+    });
+    await writeAudit(ctx, {
+      actorSubject: args.actorSubject,
+      episodeId: assignment.episodeId as Id<"episodes">,
+      eventType: "audio_assignment.proposed",
+      payload: assignment,
+      targetId: toolInvocationId,
+    });
+    return { assignmentHash: args.assignmentHash, toolInvocationId };
+  },
+});
 
 export const proposeAudioGeneration = internalMutation({
   args: {
@@ -202,11 +311,139 @@ export const rejectAudioGeneration = internalMutation({
     await writeAudit(ctx, {
       actorSubject: args.actorSubject,
       episodeId: invocation.episodeId,
-      eventType: "audio_generation.rejected",
+      eventType:
+        invocation.toolName === "applyAudioAssignment"
+          ? "audio_assignment.rejected"
+          : "audio_generation.rejected",
       payload: { requestHash: invocation.idempotencyKey },
       targetId: invocation._id,
     });
     return null;
+  },
+});
+
+export const approveAudioAssignment = internalMutation({
+  args: {
+    ...actorArgs,
+    assignmentHash: v.string(),
+    episodeId: v.id("episodes"),
+    toolInvocationId: v.id("toolInvocations"),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const invocation = await ctx.db.get(args.toolInvocationId);
+    if (
+      invocation?.episodeId !== args.episodeId ||
+      invocation.idempotencyKey !== args.assignmentHash ||
+      invocation.toolName !== "applyAudioAssignment"
+    ) {
+      throw new ConvexError({
+        code: "APPROVAL_MISMATCH",
+        message: "Audio assignment approval does not match.",
+      });
+    }
+    if (invocation.status === "approved" || invocation.status === "completed")
+      return null;
+    if (invocation.status !== "proposed") {
+      throw new ConvexError({
+        code: "INVALID_STATE",
+        message: "Audio assignment is not awaiting approval.",
+      });
+    }
+    const assignment = audioAssignmentSchema.parse(
+      JSON.parse(invocation.inputJson) as unknown,
+    );
+    const episode = await ctx.db.get(args.episodeId);
+    const current = await assignedAsset(ctx, assignment);
+    if (
+      episode?.currentRevisionId !== invocation.baseRevisionId ||
+      (current?._id ?? null) !== assignment.beforeAssetId
+    ) {
+      throw new ConvexError({
+        code: "STALE_ASSIGNMENT",
+        message: "Episode or audio assignment changed after proposal.",
+      });
+    }
+    await ctx.db.patch(invocation._id, {
+      approvedAt: Date.now(),
+      approvedBy: args.actorSubject,
+      status: "approved",
+    });
+    await writeAudit(ctx, {
+      actorSubject: args.actorSubject,
+      episodeId: args.episodeId,
+      eventType: "audio_assignment.approved",
+      payload: assignment,
+      targetId: invocation._id,
+    });
+    return null;
+  },
+});
+
+export const applyAudioAssignment = internalMutation({
+  args: {
+    ...actorArgs,
+    assignmentHash: v.string(),
+    episodeId: v.id("episodes"),
+    toolInvocationId: v.id("toolInvocations"),
+  },
+  returns: v.id("audioAssets"),
+  handler: async (ctx, args) => {
+    const invocation = await ctx.db.get(args.toolInvocationId);
+    if (
+      invocation?.episodeId !== args.episodeId ||
+      invocation.idempotencyKey !== args.assignmentHash ||
+      invocation.toolName !== "applyAudioAssignment"
+    ) {
+      throw new ConvexError({
+        code: "ASSIGNMENT_MISMATCH",
+        message: "Audio assignment does not match.",
+      });
+    }
+    const assignment = audioAssignmentSchema.parse(
+      JSON.parse(invocation.inputJson) as unknown,
+    );
+    if (invocation.status === "completed") {
+      return assignment.assetId as Id<"audioAssets">;
+    }
+    const [episode, candidate] = await Promise.all([
+      ctx.db.get(args.episodeId),
+      ctx.db.get(assignment.assetId as Id<"audioAssets">),
+    ]);
+    const current = await assignedAsset(ctx, assignment);
+    if (
+      invocation.status !== "approved" ||
+      episode?.currentRevisionId !== invocation.baseRevisionId ||
+      candidate?.status !== "candidate" ||
+      candidate.episodeId !== args.episodeId ||
+      candidate.sceneId !== assignment.sceneId ||
+      (current?._id ?? null) !== assignment.beforeAssetId
+    ) {
+      throw new ConvexError({
+        code: "STALE_ASSIGNMENT",
+        message: "Audio assignment is stale or not approved.",
+      });
+    }
+    if (current) await ctx.db.patch(current._id, { status: "rejected" });
+    await ctx.db.patch(candidate._id, {
+      status: "approved",
+      ...(assignment.variant === "default"
+        ? { variant: undefined }
+        : { variant: assignment.variant }),
+    });
+    await ctx.db.patch(invocation._id, {
+      completedAt: Date.now(),
+      outputJson: stableJson({ assetId: candidate._id }),
+      status: "completed",
+    });
+    await writeAudit(ctx, {
+      actorSubject: args.actorSubject,
+      episodeId: args.episodeId,
+      eventType: "audio_assignment.applied",
+      payload: assignment,
+      targetId: candidate._id,
+    });
+    return candidate._id;
   },
 });
 
@@ -301,6 +538,7 @@ export const recordCandidate = internalMutation({
   args: {
     bytes: v.number(),
     checksumSha256: v.string(),
+    durationSeconds: v.number(),
     episodeId: v.id("episodes"),
     immutableKey: v.string(),
     jobId: v.id("generationJobs"),
@@ -329,6 +567,7 @@ export const recordCandidate = internalMutation({
       bytes: args.bytes,
       checksumSha256: args.checksumSha256,
       createdAt: Date.now(),
+      durationSeconds: args.durationSeconds,
       episodeId: args.episodeId,
       immutableKey: args.immutableKey,
       mimeType: args.mimeType,
@@ -394,4 +633,9 @@ export const audioAsset = internalQuery({
 export const voice = internalQuery({
   args: { voiceId: v.id("voices") },
   handler: async (ctx, args) => ctx.db.get(args.voiceId),
+});
+
+export const scene = internalQuery({
+  args: { sceneId: v.id("scenes") },
+  handler: async (ctx, args) => ctx.db.get(args.sceneId),
 });

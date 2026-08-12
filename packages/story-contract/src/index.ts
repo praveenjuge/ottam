@@ -17,7 +17,7 @@ export const audioAssetRefSchema = z.object({
   checksumSha256: z.string().regex(/^[a-f0-9]{64}$/),
   durationSeconds: sceneDurationSecondsSchema,
   immutableKey: z.string().min(1).max(512),
-  mimeType: z.literal("audio/mp4"),
+  mimeType: z.enum(["audio/mp4", "audio/mpeg"]),
 });
 export type AudioAssetRef = z.infer<typeof audioAssetRefSchema>;
 
@@ -139,5 +139,28 @@ export const playbackPlanSchema = z.object({
   targetSeconds: z.number().int().positive(),
 });
 export type PlaybackPlan = z.infer<typeof playbackPlanSchema>;
+
+export const episodeReleaseBundleSchema = z
+  .object({
+    contractVersion: z.literal(1),
+    manifest: episodeManifestSchema,
+    plans: z.array(playbackPlanSchema).length(46),
+  })
+  .superRefine((bundle, context) => {
+    for (const [index, plan] of bundle.plans.entries()) {
+      if (
+        plan.targetMinutes !== index + 15 ||
+        plan.episodeId !== bundle.manifest.episodeId ||
+        plan.releaseId !== bundle.manifest.releaseId
+      ) {
+        context.addIssue({
+          code: "custom",
+          message: "Release plans must cover every whole minute from 15 to 60.",
+          path: ["plans", index],
+        });
+      }
+    }
+  });
+export type EpisodeReleaseBundle = z.infer<typeof episodeReleaseBundleSchema>;
 
 export const storyContractVersion = 1 as const;

@@ -16,6 +16,8 @@ import type * as mediaActions from "../mediaActions.js";
 import type * as mediaInternal from "../mediaInternal.js";
 import type * as mediaNode from "../mediaNode.js";
 import type * as platform from "../platform.js";
+import type * as publishingInternal from "../publishingInternal.js";
+import type * as publishingNode from "../publishingNode.js";
 import type * as series from "../series.js";
 import type * as studio from "../studio.js";
 import type * as studioActions from "../studioActions.js";
@@ -37,6 +39,8 @@ declare const fullApi: ApiFromModules<{
   mediaInternal: typeof mediaInternal;
   mediaNode: typeof mediaNode;
   platform: typeof platform;
+  publishingInternal: typeof publishingInternal;
+  publishingNode: typeof publishingNode;
   series: typeof series;
   studio: typeof studio;
   studioActions: typeof studioActions;

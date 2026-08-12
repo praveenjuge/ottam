@@ -37,7 +37,15 @@ This file records non-secret, reproducible platform decisions. Mutable live heal
 - A dedicated `Ottam account probe` key is stored in macOS Keychain.
 - The key grants only the User endpoint; every generation endpoint has no access.
 - A live `/v1/user` request authenticated successfully without consuming generation credits.
-- The production generation key will be created only after the approval-gated toolchain is implemented.
+- The approval-gated toolchain is implemented with fake-provider tests; the production generation key remains intentionally absent until deployment configuration.
+
+## Release publishing
+
+- Audio assignment is a separate, revision-bound before/after proposal after human audition.
+- A fresh human publish action validates exactly one approved asset per normal scene and walking/running assets per reactive scene.
+- All 46 whole-minute plans are compiled and embedded in the immutable release bundle before publication.
+- Editorial objects are copied into the private release bucket and verified by size, media type, and SHA-256 metadata before Convex atomically marks a release published.
+- The AI production agent has no publish tool or direct release mutation.
 
 ## Apple
 

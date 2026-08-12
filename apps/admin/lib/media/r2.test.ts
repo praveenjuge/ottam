@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { checksumSha256, immutableObjectKey } from "./r2";
+import {
+  checksumSha256,
+  immutableObjectKey,
+  releaseAudioKey,
+  releaseManifestKey,
+} from "./r2";
 
 describe("private R2 object policy", () => {
   it("creates immutable server-owned candidate keys", () => {
@@ -32,5 +37,19 @@ describe("private R2 object policy", () => {
     expect(checksumSha256(new TextEncoder().encode("ottam"))).toMatch(
       /^[a-f0-9]{64}$/,
     );
+  });
+
+  it("creates release-owned keys and rejects user-controlled paths", () => {
+    expect(
+      releaseAudioKey({
+        assetId: "asset_12345678",
+        mimeType: "audio/mpeg",
+        releaseId: "release_12345678",
+      }),
+    ).toBe("releases/release_12345678/audio/asset_12345678.mp3");
+    expect(releaseManifestKey("release_12345678")).toBe(
+      "releases/release_12345678/manifest.json",
+    );
+    expect(() => releaseManifestKey("../release")).toThrow();
   });
 });

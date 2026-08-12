@@ -469,6 +469,45 @@ p {
   gap: 0.75rem;
 }
 
+.release-panel {
+  display: grid;
+  gap: 0.7rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.release-panel h2,
+.release-panel p {
+  margin: 0;
+}
+
+.release-panel > p,
+.release-message {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.validation-result {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+}
+
+.validation-result[data-valid="true"] {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+}
+
+.validation-result small {
+  color: var(--muted);
+}
+
+.release-actions {
+  display: grid;
+  gap: 0.5rem;
+}
+
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: var(--font-sans);

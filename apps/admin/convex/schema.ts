@@ -98,6 +98,7 @@ export default defineSchema({
     bytes: v.number(),
     checksumSha256: v.string(),
     createdAt: v.number(),
+    durationSeconds: v.number(),
     episodeId: v.id("episodes"),
     immutableKey: v.string(),
     mimeType: v.string(),
@@ -129,17 +130,26 @@ export default defineSchema({
     .index("by_snapshot_hash", ["snapshotHash"]),
 
   episodeReleases: defineTable({
+    createdAt: v.number(),
     episodeId: v.id("episodes"),
-    manifestChecksumSha256: v.string(),
-    manifestKey: v.string(),
-    publishedAt: v.number(),
-    publishedBy: v.string(),
+    idempotencyKey: v.string(),
+    manifestChecksumSha256: v.optional(v.string()),
+    manifestKey: v.optional(v.string()),
+    publishedAt: v.optional(v.number()),
+    publishedBy: v.optional(v.string()),
     releaseNumber: v.number(),
     revisionId: v.id("episodeRevisions"),
-    validationReportJson: v.string(),
+    status: v.union(
+      v.literal("staging"),
+      v.literal("published"),
+      v.literal("failed"),
+    ),
+    validationReportJson: v.optional(v.string()),
   })
     .index("by_episode_and_number", ["episodeId", "releaseNumber"])
-    .index("by_manifest_key", ["manifestKey"]),
+    .index("by_manifest_key", ["manifestKey"])
+    .index("by_idempotency_key", ["idempotencyKey"])
+    .index("by_revision", ["revisionId"]),
 
   episodeProgress: defineTable({
     completedAt: v.optional(v.number()),
