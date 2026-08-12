@@ -8,7 +8,11 @@
  * @module
  */
 
+import type * as admin from "../admin.js";
+import type * as lib_authorization from "../lib/authorization.js";
+import type * as listenerProfiles from "../listenerProfiles.js";
 import type * as platform from "../platform.js";
+import type * as series from "../series.js";
 
 import type {
   ApiFromModules,
@@ -17,7 +21,11 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  admin: typeof admin;
+  "lib/authorization": typeof lib_authorization;
+  listenerProfiles: typeof listenerProfiles;
   platform: typeof platform;
+  series: typeof series;
 }>;
 
 /**
