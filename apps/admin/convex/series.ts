@@ -28,6 +28,34 @@ export const listPublished = query({
   },
 });
 
+export const listAdmin = query({
+  args: {},
+  returns: v.array(
+    v.object({
+      description: v.string(),
+      genre: v.string(),
+      id: v.id("series"),
+      slug: v.string(),
+      status: v.string(),
+      title: v.string(),
+    }),
+  ),
+  handler: async (ctx) => {
+    await requireAdmin(ctx);
+    const rows = await ctx.db.query("series").collect();
+    return rows
+      .map((row) => ({
+        description: row.description,
+        genre: row.genre,
+        id: row._id,
+        slug: row.slug,
+        status: row.status,
+        title: row.title,
+      }))
+      .sort((left, right) => left.title.localeCompare(right.title));
+  },
+});
+
 export const createDraft = mutation({
   args: {
     description: v.string(),

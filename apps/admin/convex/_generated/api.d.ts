@@ -10,9 +10,13 @@
 
 import type * as admin from "../admin.js";
 import type * as lib_authorization from "../lib/authorization.js";
+import type * as lib_studioPolicy from "../lib/studioPolicy.js";
 import type * as listenerProfiles from "../listenerProfiles.js";
 import type * as platform from "../platform.js";
 import type * as series from "../series.js";
+import type * as studio from "../studio.js";
+import type * as studioActions from "../studioActions.js";
+import type * as studioInternal from "../studioInternal.js";
 
 import type {
   ApiFromModules,
@@ -23,9 +27,13 @@ import type {
 declare const fullApi: ApiFromModules<{
   admin: typeof admin;
   "lib/authorization": typeof lib_authorization;
+  "lib/studioPolicy": typeof lib_studioPolicy;
   listenerProfiles: typeof listenerProfiles;
   platform: typeof platform;
   series: typeof series;
+  studio: typeof studio;
+  studioActions: typeof studioActions;
+  studioInternal: typeof studioInternal;
 }>;
 
 /**

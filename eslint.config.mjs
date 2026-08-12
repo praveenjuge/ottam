@@ -17,6 +17,17 @@ export default tseslint.config(
   ...tseslint.configs.strictTypeChecked,
   ...tseslint.configs.stylisticTypeChecked,
   {
+    files: ["**/*.{js,mjs,cjs}"],
+    ...tseslint.configs.disableTypeChecked,
+  },
+  {
+    files: [
+      "apps/admin/components/ai-elements/**/*.{ts,tsx}",
+      "apps/admin/components/ui/**/*.{ts,tsx}",
+    ],
+    ...tseslint.configs.disableTypeChecked,
+  },
+  {
     files: ["**/*.{ts,tsx}"],
     languageOptions: {
       globals: { ...globals.browser, ...globals.node },

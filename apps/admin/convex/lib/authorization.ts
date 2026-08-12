@@ -1,7 +1,7 @@
 import { ConvexError } from "convex/values";
-import type { MutationCtx, QueryCtx } from "../_generated/server";
+import type { ActionCtx, MutationCtx, QueryCtx } from "../_generated/server";
 
-type AuthContext = Pick<MutationCtx | QueryCtx, "auth">;
+type AuthContext = Pick<ActionCtx | MutationCtx | QueryCtx, "auth">;
 
 export function normalizeEmail(email: string): string {
   return email.trim().toLocaleLowerCase("en-US");

@@ -186,9 +186,12 @@ export default defineSchema({
     chatId: v.id("productionChats"),
     contentJson: v.string(),
     createdAt: v.number(),
+    messageId: v.string(),
     role: v.union(v.literal("user"), v.literal("assistant"), v.literal("tool")),
     sequence: v.number(),
-  }).index("by_chat_and_sequence", ["chatId", "sequence"]),
+  })
+    .index("by_chat_and_sequence", ["chatId", "sequence"])
+    .index("by_chat_and_message", ["chatId", "messageId"]),
 
   agentRuns: defineTable({
     baseRevisionId: v.optional(v.id("episodeRevisions")),
@@ -196,6 +199,9 @@ export default defineSchema({
     completedAt: v.optional(v.number()),
     episodeId: v.id("episodes"),
     model: v.string(),
+    outputTokens: v.optional(v.number()),
+    promptTokens: v.optional(v.number()),
+    runId: v.string(),
     startedAt: v.number(),
     status: v.union(
       v.literal("running"),
@@ -203,7 +209,9 @@ export default defineSchema({
       v.literal("failed"),
       v.literal("cancelled"),
     ),
-  }).index("by_chat_and_started", ["chatId", "startedAt"]),
+  })
+    .index("by_chat_and_started", ["chatId", "startedAt"])
+    .index("by_run_id", ["runId"]),
 
   toolInvocations: defineTable({
     agentRunId: v.id("agentRuns"),
