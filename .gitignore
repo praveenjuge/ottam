@@ -3,6 +3,7 @@ node_modules/
 dist/
 coverage/
 .next/
+.vercel/
 *.tsbuildinfo
 .DS_Store
 
@@ -13,3 +14,4 @@ coverage/
 DerivedData/
 *.xcuserdata/
 *.xcuserstate
+.vercel

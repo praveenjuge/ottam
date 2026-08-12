@@ -5,7 +5,13 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   {
-    ignores: ["**/.next/**", "**/.turbo/**", "**/coverage/**", "**/dist/**"],
+    ignores: [
+      "**/.next/**",
+      "**/.turbo/**",
+      "**/convex/_generated/**",
+      "**/coverage/**",
+      "**/dist/**",
+    ],
   },
   eslint.configs.recommended,
   ...tseslint.configs.strictTypeChecked,
