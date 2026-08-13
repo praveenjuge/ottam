@@ -59,6 +59,9 @@
         "tailwindcss": "^4.3.3",
       },
     },
+    "apps/ios": {
+      "name": "@ottam/ios",
+    },
     "packages/story-compiler": {
       "name": "@ottam/story-compiler",
       "version": "0.0.0",
@@ -398,6 +401,8 @@
     "@nodelib/fs.walk": ["@nodelib/fs.walk@1.2.8", "", { "dependencies": { "@nodelib/fs.scandir": "2.1.5", "fastq": "^1.6.0" } }, "sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg=="],
 
     "@ottam/admin": ["@ottam/admin@workspace:apps/admin"],
+
+    "@ottam/ios": ["@ottam/ios@workspace:apps/ios"],
 
     "@ottam/story-compiler": ["@ottam/story-compiler@workspace:packages/story-compiler"],
 

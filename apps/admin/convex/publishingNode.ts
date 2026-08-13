@@ -165,6 +165,7 @@ export const publishEpisode = action({
       });
       await ctx.runMutation(internal.publishingInternal.finalizeRelease, {
         actorSubject: identity.subject,
+        assetKeys: [...selectedKeys].sort(),
         manifestChecksumSha256: uploaded.checksum,
         manifestKey,
         releaseId: reserved.releaseId,

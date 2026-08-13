@@ -1,0 +1,590 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0043AE7D00D56477F52E8D33 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = FBEB1CCE04EBD4AEACDEADFB /* AppIcon.icon */; };
+		0197C8706C8F626D4DE457BB /* ConvexMobile in Frameworks */ = {isa = PBXBuildFile; productRef = 89C9964840825FA2F5C28A1C /* ConvexMobile */; };
+		0622B9C1B886F5A41896E125 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 996EFF4FB092D567AC506CBC /* LibraryView.swift */; };
+		0F2B4E1C40B96D5C6A8F80FC /* PlaybackTimelineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A452864C402FDD3AFE38DF /* PlaybackTimelineTests.swift */; };
+		14B38B3A9388C055F81ED0DA /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD4C8D0477799E32002E67E /* RootView.swift */; };
+		1668D35E39E3D7A08B4CDCA8 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47D72A206F371E4A2071C8D /* HomeView.swift */; };
+		16921DAF87311FDCBA37F902 /* ReleaseDownloadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D35CF8BE5EB151BA7B38DF8A /* ReleaseDownloadService.swift */; };
+		1B9BBA329A8CB10AA8B8AE8F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E9126727DD8B4D2DBDFAA7 /* AppDelegate.swift */; };
+		23B85B90478658D718D48281 /* RunView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9567848A5339A21604E65ABF /* RunView.swift */; };
+		3F40D8392004CD48FD65053C /* CatalogStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21BD70B91342D8FED3252F12 /* CatalogStore.swift */; };
+		4CD3F1993A53F8BE171D63A3 /* ClerkKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 6F60D8EA2AA57C159B6CE877 /* ClerkKitUI */; };
+		5DDE6A73BF89EB258C65931A /* ProgressSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F6610EABFDFFB316FDC954 /* ProgressSyncService.swift */; };
+		6867D4253578CC491EA027D8 /* ClerkConvex in Frameworks */ = {isa = PBXBuildFile; productRef = 98CF8BA3C8641A010E1A4C4E /* ClerkConvex */; };
+		6FF451333606B2B7F2796DB9 /* AppServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0342015E9DDC6D6D20562BE1 /* AppServices.swift */; };
+		77285510AF74941959D1661E /* PlaybackTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189D4893A5701477E8D53E34 /* PlaybackTimeline.swift */; };
+		A10F8D57A686F0065667EDB6 /* ClerkKit in Frameworks */ = {isa = PBXBuildFile; productRef = C1D6280C093B2234C5A8F566 /* ClerkKit */; };
+		A1214A43B64D05694C3C61B6 /* StoryModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918963ED37D4702857B719C7 /* StoryModels.swift */; };
+		A78E5EAB2C4CC6102725B1A5 /* AudioPlaybackEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FF83430219A9CFE4FD1F691 /* AudioPlaybackEngine.swift */; };
+		AA02B532FFA98510CEB0F055 /* RunSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95EF58DC748973FD1BB7F1D6 /* RunSessionController.swift */; };
+		BF9DF2BD7BB308B9D53D22DC /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA60CBB1B2DAF24D796E0C6D /* ActivityView.swift */; };
+		C586BA20F219BC86E786DA5D /* EpisodeSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563036CB94873A2897C807EE /* EpisodeSetupView.swift */; };
+		DCC8D8F2F19E492120C062E4 /* PersistentModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = F84C0B2A755424C592C26EED /* PersistentModels.swift */; };
+		DE63B924A64540A1CE38AC32 /* MotionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFEBC17AFA2331D548F879E5 /* MotionEngine.swift */; };
+		EE02154EA837C613A2E31EF4 /* OttamApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A47E843FF3E0133B95FC71 /* OttamApp.swift */; };
+		F7C5C3A097F8DBF426E72036 /* ConvexConcurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38CA4851EEDECB4A5771E6 /* ConvexConcurrency.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		7F3508B4046D2118B20B0796 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 65AB1D4659D57C0F2A1B97A4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DAF199310DAD181275D7BDEF;
+			remoteInfo = Ottam;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0342015E9DDC6D6D20562BE1 /* AppServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppServices.swift; sourceTree = "<group>"; };
+		07E9126727DD8B4D2DBDFAA7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		189D4893A5701477E8D53E34 /* PlaybackTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackTimeline.swift; sourceTree = "<group>"; };
+		21BD70B91342D8FED3252F12 /* CatalogStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogStore.swift; sourceTree = "<group>"; };
+		2CD4C8D0477799E32002E67E /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		3ADEEDB8E4E46A985F5DE82E /* Ottam.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Ottam.entitlements; sourceTree = "<group>"; };
+		40A47E843FF3E0133B95FC71 /* OttamApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OttamApp.swift; sourceTree = "<group>"; };
+		563036CB94873A2897C807EE /* EpisodeSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeSetupView.swift; sourceTree = "<group>"; };
+		63F6610EABFDFFB316FDC954 /* ProgressSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressSyncService.swift; sourceTree = "<group>"; };
+		68B487825497A2866C189CCC /* OttamTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = OttamTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7FF83430219A9CFE4FD1F691 /* AudioPlaybackEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlaybackEngine.swift; sourceTree = "<group>"; };
+		823B75173A8C4B9ECFC494C5 /* Ottam.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Ottam.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		84A452864C402FDD3AFE38DF /* PlaybackTimelineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackTimelineTests.swift; sourceTree = "<group>"; };
+		918963ED37D4702857B719C7 /* StoryModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryModels.swift; sourceTree = "<group>"; };
+		9567848A5339A21604E65ABF /* RunView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunView.swift; sourceTree = "<group>"; };
+		95EF58DC748973FD1BB7F1D6 /* RunSessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunSessionController.swift; sourceTree = "<group>"; };
+		996EFF4FB092D567AC506CBC /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
+		D35CF8BE5EB151BA7B38DF8A /* ReleaseDownloadService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseDownloadService.swift; sourceTree = "<group>"; };
+		DA38CA4851EEDECB4A5771E6 /* ConvexConcurrency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvexConcurrency.swift; sourceTree = "<group>"; };
+		E47D72A206F371E4A2071C8D /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		EFEBC17AFA2331D548F879E5 /* MotionEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionEngine.swift; sourceTree = "<group>"; };
+		F84C0B2A755424C592C26EED /* PersistentModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentModels.swift; sourceTree = "<group>"; };
+		FA60CBB1B2DAF24D796E0C6D /* ActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityView.swift; sourceTree = "<group>"; };
+		FBEB1CCE04EBD4AEACDEADFB /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = wrapper.icon; path = AppIcon.icon; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4EB43EC66099D51573BE22C0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10F8D57A686F0065667EDB6 /* ClerkKit in Frameworks */,
+				4CD3F1993A53F8BE171D63A3 /* ClerkKitUI in Frameworks */,
+				6867D4253578CC491EA027D8 /* ClerkConvex in Frameworks */,
+				0197C8706C8F626D4DE457BB /* ConvexMobile in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		17C499E6D24EC567D695797A /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				F84C0B2A755424C592C26EED /* PersistentModels.swift */,
+				189D4893A5701477E8D53E34 /* PlaybackTimeline.swift */,
+				918963ED37D4702857B719C7 /* StoryModels.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		58F979432637A76881590E16 /* Ottam */ = {
+			isa = PBXGroup;
+			children = (
+				07E9126727DD8B4D2DBDFAA7 /* AppDelegate.swift */,
+				FBEB1CCE04EBD4AEACDEADFB /* AppIcon.icon */,
+				0342015E9DDC6D6D20562BE1 /* AppServices.swift */,
+				3ADEEDB8E4E46A985F5DE82E /* Ottam.entitlements */,
+				40A47E843FF3E0133B95FC71 /* OttamApp.swift */,
+				17C499E6D24EC567D695797A /* Models */,
+				9AE7A4B5B04024DA75243D88 /* Services */,
+				5FA69350BFA0B3EF18D9E5B0 /* Views */,
+			);
+			path = Ottam;
+			sourceTree = "<group>";
+		};
+		5FA69350BFA0B3EF18D9E5B0 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				FA60CBB1B2DAF24D796E0C6D /* ActivityView.swift */,
+				563036CB94873A2897C807EE /* EpisodeSetupView.swift */,
+				E47D72A206F371E4A2071C8D /* HomeView.swift */,
+				996EFF4FB092D567AC506CBC /* LibraryView.swift */,
+				2CD4C8D0477799E32002E67E /* RootView.swift */,
+				9567848A5339A21604E65ABF /* RunView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		7C9F2E9BAFF720AB84BD2163 = {
+			isa = PBXGroup;
+			children = (
+				58F979432637A76881590E16 /* Ottam */,
+				EA4E228FB5FC01897342F869 /* OttamTests */,
+				B5184CFF197A85C51C71F26C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		9AE7A4B5B04024DA75243D88 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				7FF83430219A9CFE4FD1F691 /* AudioPlaybackEngine.swift */,
+				21BD70B91342D8FED3252F12 /* CatalogStore.swift */,
+				DA38CA4851EEDECB4A5771E6 /* ConvexConcurrency.swift */,
+				EFEBC17AFA2331D548F879E5 /* MotionEngine.swift */,
+				63F6610EABFDFFB316FDC954 /* ProgressSyncService.swift */,
+				D35CF8BE5EB151BA7B38DF8A /* ReleaseDownloadService.swift */,
+				95EF58DC748973FD1BB7F1D6 /* RunSessionController.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		B5184CFF197A85C51C71F26C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				823B75173A8C4B9ECFC494C5 /* Ottam.app */,
+				68B487825497A2866C189CCC /* OttamTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		EA4E228FB5FC01897342F869 /* OttamTests */ = {
+			isa = PBXGroup;
+			children = (
+				84A452864C402FDD3AFE38DF /* PlaybackTimelineTests.swift */,
+			);
+			path = OttamTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		DAF199310DAD181275D7BDEF /* Ottam */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CD751F9C36DFF248F4549AF8 /* Build configuration list for PBXNativeTarget "Ottam" */;
+			buildPhases = (
+				420AADF2AD1D71961C3B144B /* Sources */,
+				1148285E88BB1012C3804DE3 /* Resources */,
+				4EB43EC66099D51573BE22C0 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Ottam;
+			packageProductDependencies = (
+				C1D6280C093B2234C5A8F566 /* ClerkKit */,
+				6F60D8EA2AA57C159B6CE877 /* ClerkKitUI */,
+				98CF8BA3C8641A010E1A4C4E /* ClerkConvex */,
+				89C9964840825FA2F5C28A1C /* ConvexMobile */,
+			);
+			productName = Ottam;
+			productReference = 823B75173A8C4B9ECFC494C5 /* Ottam.app */;
+			productType = "com.apple.product-type.application";
+		};
+		EB525812FA796A4FAF8E7E0B /* OttamTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8CA92E194934A1DBB6D275F0 /* Build configuration list for PBXNativeTarget "OttamTests" */;
+			buildPhases = (
+				08701519DF496A1B6BBA7C2B /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5DE05C98CCBE671836C3196F /* PBXTargetDependency */,
+			);
+			name = OttamTests;
+			packageProductDependencies = (
+			);
+			productName = OttamTests;
+			productReference = 68B487825497A2866C189CCC /* OttamTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		65AB1D4659D57C0F2A1B97A4 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = E73C947890BE9213F0473165 /* Build configuration list for PBXProject "Ottam" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 7C9F2E9BAFF720AB84BD2163;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				5F193E3F6092140E16BAEC78 /* XCRemoteSwiftPackageReference "clerk-ios" */,
+				7EF4FBE72C1E81AA9CB4B7AF /* XCRemoteSwiftPackageReference "clerk-convex-swift" */,
+				9C1C45CAF3CB9979EC28E5E6 /* XCRemoteSwiftPackageReference "convex-swift" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = B5184CFF197A85C51C71F26C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DAF199310DAD181275D7BDEF /* Ottam */,
+				EB525812FA796A4FAF8E7E0B /* OttamTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1148285E88BB1012C3804DE3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0043AE7D00D56477F52E8D33 /* AppIcon.icon in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		08701519DF496A1B6BBA7C2B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0F2B4E1C40B96D5C6A8F80FC /* PlaybackTimelineTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		420AADF2AD1D71961C3B144B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF9DF2BD7BB308B9D53D22DC /* ActivityView.swift in Sources */,
+				1B9BBA329A8CB10AA8B8AE8F /* AppDelegate.swift in Sources */,
+				6FF451333606B2B7F2796DB9 /* AppServices.swift in Sources */,
+				A78E5EAB2C4CC6102725B1A5 /* AudioPlaybackEngine.swift in Sources */,
+				3F40D8392004CD48FD65053C /* CatalogStore.swift in Sources */,
+				F7C5C3A097F8DBF426E72036 /* ConvexConcurrency.swift in Sources */,
+				C586BA20F219BC86E786DA5D /* EpisodeSetupView.swift in Sources */,
+				1668D35E39E3D7A08B4CDCA8 /* HomeView.swift in Sources */,
+				0622B9C1B886F5A41896E125 /* LibraryView.swift in Sources */,
+				DE63B924A64540A1CE38AC32 /* MotionEngine.swift in Sources */,
+				EE02154EA837C613A2E31EF4 /* OttamApp.swift in Sources */,
+				DCC8D8F2F19E492120C062E4 /* PersistentModels.swift in Sources */,
+				77285510AF74941959D1661E /* PlaybackTimeline.swift in Sources */,
+				5DDE6A73BF89EB258C65931A /* ProgressSyncService.swift in Sources */,
+				16921DAF87311FDCBA37F902 /* ReleaseDownloadService.swift in Sources */,
+				14B38B3A9388C055F81ED0DA /* RootView.swift in Sources */,
+				AA02B532FFA98510CEB0F055 /* RunSessionController.swift in Sources */,
+				23B85B90478658D718D48281 /* RunView.swift in Sources */,
+				A1214A43B64D05694C3C61B6 /* StoryModels.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5DE05C98CCBE671836C3196F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DAF199310DAD181275D7BDEF /* Ottam */;
+			targetProxy = 7F3508B4046D2118B20B0796 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		140FE293AB63832D2B8F11A8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.praveenjuge.ottam.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Ottam.app/Ottam";
+			};
+			name = Release;
+		};
+		1A43F1941B119CF20D38F4C0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.praveenjuge.ottam.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Ottam.app/Ottam";
+			};
+			name = Debug;
+		};
+		5857A0A7BD85AD2F7DB61E02 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.2;
+			};
+			name = Release;
+		};
+		96A581D57D6846ECE567F283 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Ottam/Ottam.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_KEY_CFBundleDisplayName = Ottam;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
+				INFOPLIST_KEY_NSMotionUsageDescription = "Ottam uses motion to pause stories when you stop and select supportive walking or running scene variants.";
+				INFOPLIST_KEY_UIBackgroundModes = (
+					audio,
+					fetch,
+				);
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.praveenjuge.ottam;
+				PRODUCT_NAME = Ottam;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		B5B01F3447FAA2DC72078E94 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.2;
+			};
+			name = Debug;
+		};
+		E5708B1BF3FD51B65A5B678F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Ottam/Ottam.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_KEY_CFBundleDisplayName = Ottam;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
+				INFOPLIST_KEY_NSMotionUsageDescription = "Ottam uses motion to pause stories when you stop and select supportive walking or running scene variants.";
+				INFOPLIST_KEY_UIBackgroundModes = (
+					audio,
+					fetch,
+				);
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.praveenjuge.ottam;
+				PRODUCT_NAME = Ottam;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8CA92E194934A1DBB6D275F0 /* Build configuration list for PBXNativeTarget "OttamTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A43F1941B119CF20D38F4C0 /* Debug */,
+				140FE293AB63832D2B8F11A8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		CD751F9C36DFF248F4549AF8 /* Build configuration list for PBXNativeTarget "Ottam" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E5708B1BF3FD51B65A5B678F /* Debug */,
+				96A581D57D6846ECE567F283 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E73C947890BE9213F0473165 /* Build configuration list for PBXProject "Ottam" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B5B01F3447FAA2DC72078E94 /* Debug */,
+				5857A0A7BD85AD2F7DB61E02 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5F193E3F6092140E16BAEC78 /* XCRemoteSwiftPackageReference "clerk-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/clerk/clerk-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.8;
+			};
+		};
+		7EF4FBE72C1E81AA9CB4B7AF /* XCRemoteSwiftPackageReference "clerk-convex-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/clerk/clerk-convex-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.0;
+			};
+		};
+		9C1C45CAF3CB9979EC28E5E6 /* XCRemoteSwiftPackageReference "convex-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/get-convex/convex-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.8.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6F60D8EA2AA57C159B6CE877 /* ClerkKitUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5F193E3F6092140E16BAEC78 /* XCRemoteSwiftPackageReference "clerk-ios" */;
+			productName = ClerkKitUI;
+		};
+		89C9964840825FA2F5C28A1C /* ConvexMobile */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9C1C45CAF3CB9979EC28E5E6 /* XCRemoteSwiftPackageReference "convex-swift" */;
+			productName = ConvexMobile;
+		};
+		98CF8BA3C8641A010E1A4C4E /* ClerkConvex */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7EF4FBE72C1E81AA9CB4B7AF /* XCRemoteSwiftPackageReference "clerk-convex-swift" */;
+			productName = ClerkConvex;
+		};
+		C1D6280C093B2234C5A8F566 /* ClerkKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5F193E3F6092140E16BAEC78 /* XCRemoteSwiftPackageReference "clerk-ios" */;
+			productName = ClerkKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 65AB1D4659D57C0F2A1B97A4 /* Project object */;
+}

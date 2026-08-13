@@ -130,6 +130,7 @@ export default defineSchema({
     .index("by_snapshot_hash", ["snapshotHash"]),
 
   episodeReleases: defineTable({
+    assetKeys: v.array(v.string()),
     createdAt: v.number(),
     episodeId: v.id("episodes"),
     idempotencyKey: v.string(),
@@ -152,6 +153,7 @@ export default defineSchema({
     .index("by_revision", ["revisionId"]),
 
   episodeProgress: defineTable({
+    clientSequence: v.number(),
     completedAt: v.optional(v.number()),
     episodeId: v.id("episodes"),
     listenerSubject: v.string(),

@@ -1,0 +1,11 @@
+{
+  "name": "@ottam/ios",
+  "private": true,
+  "scripts": {
+    "build": "xcodebuild -project Ottam.xcodeproj -scheme Ottam -sdk iphonesimulator -destination \"platform=iOS Simulator,name=${IOS_SIMULATOR_NAME:-iPhone 17 Pro}\" -derivedDataPath DerivedDataBuild build CODE_SIGNING_ALLOWED=NO",
+    "lint": "swiftformat Ottam OttamTests --lint",
+    "project": "xcodegen generate",
+    "test": "xcodebuild -project Ottam.xcodeproj -scheme Ottam -sdk iphonesimulator -destination \"platform=iOS Simulator,name=${IOS_SIMULATOR_NAME:-iPhone 17 Pro}\" -derivedDataPath DerivedDataTest test",
+    "typecheck": "xcodebuild -project Ottam.xcodeproj -scheme Ottam -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath DerivedDataTypecheck build CODE_SIGNING_ALLOWED=NO ARCHS=arm64 ONLY_ACTIVE_ARCH=YES"
+  }
+}

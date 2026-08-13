@@ -1,0 +1,60 @@
+name: Ottam
+options:
+  bundleIdPrefix: com.praveenjuge
+  deploymentTarget:
+    iOS: "18.0"
+  developmentLanguage: en
+  xcodeVersion: "26.0"
+packages:
+  Clerk:
+    url: https://github.com/clerk/clerk-ios.git
+    from: 1.3.8
+  ClerkConvex:
+    url: https://github.com/clerk/clerk-convex-swift.git
+    from: 0.1.0
+  ConvexMobile:
+    url: https://github.com/get-convex/convex-swift.git
+    from: 0.8.1
+settings:
+  base:
+    SWIFT_VERSION: 6.2
+    ENABLE_USER_SCRIPT_SANDBOXING: true
+    GENERATE_INFOPLIST_FILE: true
+targets:
+  Ottam:
+    type: application
+    platform: iOS
+    sources:
+      - Ottam
+    dependencies:
+      - package: Clerk
+        product: ClerkKit
+      - package: Clerk
+        product: ClerkKitUI
+      - package: ClerkConvex
+        product: ClerkConvex
+      - package: ConvexMobile
+        product: ConvexMobile
+    settings:
+      base:
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_ENTITLEMENTS: Ottam/Ottam.entitlements
+        INFOPLIST_KEY_CFBundleDisplayName: Ottam
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.entertainment
+        INFOPLIST_KEY_NSMotionUsageDescription: Ottam uses motion to pause stories when you stop and select supportive walking or running scene variants.
+        INFOPLIST_KEY_UIBackgroundModes:
+          - audio
+          - fetch
+        PRODUCT_BUNDLE_IDENTIFIER: com.praveenjuge.ottam
+        PRODUCT_NAME: Ottam
+        TARGETED_DEVICE_FAMILY: 1
+  OttamTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - OttamTests
+    dependencies:
+      - target: Ottam
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.praveenjuge.ottam.tests

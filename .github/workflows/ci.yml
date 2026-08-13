@@ -15,12 +15,15 @@ concurrency:
 jobs:
   verify:
     name: Lint, typecheck, test, and build
-    runs-on: macos-15
-    timeout-minutes: 20
+    runs-on: macos-26
+    timeout-minutes: 30
+    env:
+      IOS_SIMULATOR_NAME: iPhone 16e
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version-file: package.json
+      - run: brew install swiftformat
       - run: bun install --frozen-lockfile
       - run: bun run verify

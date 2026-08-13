@@ -20,6 +20,10 @@
     },
     "test": {
       "dependsOn": ["^build"]
+    },
+    "@ottam/ios#build": {
+      "cache": false,
+      "dependsOn": ["^build"]
     }
   }
 }

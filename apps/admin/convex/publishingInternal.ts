@@ -57,6 +57,7 @@ export const reserveRelease = internalMutation({
       .first();
     const releaseNumber = (latest?.releaseNumber ?? 0) + 1;
     const releaseId = await ctx.db.insert("episodeReleases", {
+      assetKeys: [],
       createdAt: Date.now(),
       episodeId: args.episodeId,
       idempotencyKey: args.idempotencyKey,
@@ -71,6 +72,7 @@ export const reserveRelease = internalMutation({
 export const finalizeRelease = internalMutation({
   args: {
     ...actorArgs,
+    assetKeys: v.array(v.string()),
     manifestChecksumSha256: v.string(),
     manifestKey: v.string(),
     releaseId: v.id("episodeReleases"),
@@ -98,6 +100,7 @@ export const finalizeRelease = internalMutation({
     }
     const now = Date.now();
     await ctx.db.patch(release._id, {
+      assetKeys: args.assetKeys,
       manifestChecksumSha256: args.manifestChecksumSha256,
       manifestKey: args.manifestKey,
       publishedAt: now,
@@ -110,6 +113,10 @@ export const finalizeRelease = internalMutation({
       status: "published",
       updatedAt: now,
     });
+    const series = await ctx.db.get(episode.seriesId);
+    if (series && series.status !== "published") {
+      await ctx.db.patch(series._id, { status: "published", updatedAt: now });
+    }
     await ctx.db.insert("auditEvents", {
       actorSubject: args.actorSubject,
       createdAt: now,

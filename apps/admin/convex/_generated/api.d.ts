@@ -9,8 +9,11 @@
  */
 
 import type * as admin from "../admin.js";
+import type * as catalog from "../catalog.js";
 import type * as lib_authorization from "../lib/authorization.js";
+import type * as lib_listenerPolicy from "../lib/listenerPolicy.js";
 import type * as lib_studioPolicy from "../lib/studioPolicy.js";
+import type * as listener from "../listener.js";
 import type * as listenerProfiles from "../listenerProfiles.js";
 import type * as mediaActions from "../mediaActions.js";
 import type * as mediaInternal from "../mediaInternal.js";
@@ -18,6 +21,8 @@ import type * as mediaNode from "../mediaNode.js";
 import type * as platform from "../platform.js";
 import type * as publishingInternal from "../publishingInternal.js";
 import type * as publishingNode from "../publishingNode.js";
+import type * as releaseAccess from "../releaseAccess.js";
+import type * as releaseInternal from "../releaseInternal.js";
 import type * as series from "../series.js";
 import type * as studio from "../studio.js";
 import type * as studioActions from "../studioActions.js";
@@ -32,8 +37,11 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   admin: typeof admin;
+  catalog: typeof catalog;
   "lib/authorization": typeof lib_authorization;
+  "lib/listenerPolicy": typeof lib_listenerPolicy;
   "lib/studioPolicy": typeof lib_studioPolicy;
+  listener: typeof listener;
   listenerProfiles: typeof listenerProfiles;
   mediaActions: typeof mediaActions;
   mediaInternal: typeof mediaInternal;
@@ -41,6 +49,8 @@ declare const fullApi: ApiFromModules<{
   platform: typeof platform;
   publishingInternal: typeof publishingInternal;
   publishingNode: typeof publishingNode;
+  releaseAccess: typeof releaseAccess;
+  releaseInternal: typeof releaseInternal;
   series: typeof series;
   studio: typeof studio;
   studioActions: typeof studioActions;

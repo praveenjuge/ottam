@@ -1,0 +1,6 @@
+--swiftversion 6.2
+--indent 2
+--wraparguments before-first
+--wrapcollections before-first
+--self init-only
+--commas always

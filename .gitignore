@@ -11,7 +11,8 @@ coverage/
 .env
 .env.*
 !.env.example
-DerivedData/
+DerivedData*/
+SourcePackages/
 *.xcuserdata/
 *.xcuserstate
 .vercel
