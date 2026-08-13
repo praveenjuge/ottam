@@ -72,7 +72,10 @@ function parseStoredMessages(
 export async function POST(request: Request): Promise<Response> {
   const session = await auth();
   if (!session.userId) return jsonError("Sign in is required.", 401);
-  const convexToken = await session.getToken({ template: "convex" });
+  const convexToken =
+    session.sessionClaims.aud === "convex"
+      ? await session.getToken()
+      : await session.getToken({ template: "convex" });
   const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
   if (!convexToken || !convexUrl) {
     return jsonError("Studio authentication is not configured.", 503);
