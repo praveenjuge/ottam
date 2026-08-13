@@ -12,6 +12,7 @@ export type ConversationProps = ComponentProps<typeof StickToBottom>;
 
 export const Conversation = ({ className, ...props }: ConversationProps) => (
   <StickToBottom
+    aria-live="polite"
     className={cn("relative flex-1 overflow-y-hidden", className)}
     initial="smooth"
     resize="smooth"
@@ -84,6 +85,7 @@ export const ConversationScrollButton = ({
   return (
     !isAtBottom && (
       <Button
+        aria-label="Scroll to latest message"
         className={cn(
           "absolute bottom-4 left-[50%] translate-x-[-50%] rounded-full dark:bg-background dark:hover:bg-muted",
           className,
@@ -152,6 +154,7 @@ export const ConversationDownload = ({
 
   return (
     <Button
+      aria-label="Download conversation"
       className={cn(
         "absolute top-4 right-4 rounded-full dark:bg-background dark:hover:bg-muted",
         className,

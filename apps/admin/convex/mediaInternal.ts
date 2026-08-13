@@ -1,13 +1,21 @@
 import { sha256 } from "@noble/hashes/sha2.js";
 import { bytesToHex } from "@noble/hashes/utils.js";
 import { ConvexError, v } from "convex/values";
-import type { Id } from "./_generated/dataModel";
+import type { Doc, Id } from "./_generated/dataModel";
 import {
   internalMutation,
   internalQuery,
   type MutationCtx,
 } from "./_generated/server";
 import { stableJson } from "./lib/studioPolicy";
+import {
+  audioAssetDocument,
+  generationJobDocument,
+  sceneDocument,
+  toolInvocationDocument,
+  voiceDocument,
+  generationJobStatus,
+} from "./lib/documentValidators";
 import { generationRequestSchema } from "../lib/media/generation-contract";
 import {
   audioAssignmentSchema,
@@ -461,9 +469,16 @@ export const claimGenerationJob = internalMutation({
   returns: v.object({
     claimed: v.boolean(),
     jobId: v.id("generationJobs"),
-    status: v.string(),
+    status: generationJobStatus,
   }),
-  handler: async (ctx, args) => {
+  handler: async (
+    ctx,
+    args,
+  ): Promise<{
+    claimed: boolean;
+    jobId: Id<"generationJobs">;
+    status: Doc<"generationJobs">["status"];
+  }> => {
     const invocation = await ctx.db.get(args.toolInvocationId);
     if (
       invocation?.status !== "approved" ||
@@ -617,25 +632,30 @@ export const finishGenerationJob = internalMutation({
 
 export const generationResult = internalQuery({
   args: { jobId: v.id("generationJobs") },
+  returns: v.union(v.null(), generationJobDocument),
   handler: async (ctx, args) => ctx.db.get(args.jobId),
 });
 
 export const generationInvocation = internalQuery({
   args: { toolInvocationId: v.id("toolInvocations") },
+  returns: v.union(v.null(), toolInvocationDocument),
   handler: async (ctx, args) => ctx.db.get(args.toolInvocationId),
 });
 
 export const audioAsset = internalQuery({
   args: { assetId: v.id("audioAssets") },
+  returns: v.union(v.null(), audioAssetDocument),
   handler: async (ctx, args) => ctx.db.get(args.assetId),
 });
 
 export const voice = internalQuery({
   args: { voiceId: v.id("voices") },
+  returns: v.union(v.null(), voiceDocument),
   handler: async (ctx, args) => ctx.db.get(args.voiceId),
 });
 
 export const scene = internalQuery({
   args: { sceneId: v.id("scenes") },
+  returns: v.union(v.null(), sceneDocument),
   handler: async (ctx, args) => ctx.db.get(args.sceneId),
 });

@@ -21,7 +21,7 @@ export const current = query({
     return await ctx.db
       .query("listenerProfiles")
       .withIndex("by_clerk_subject", (index) =>
-        index.eq("clerkSubject", identity.subject),
+        index.eq("clerkSubject", identity.tokenIdentifier),
       )
       .unique();
   },
@@ -35,7 +35,7 @@ export const ensureCurrent = mutation({
     const existing = await ctx.db
       .query("listenerProfiles")
       .withIndex("by_clerk_subject", (index) =>
-        index.eq("clerkSubject", identity.subject),
+        index.eq("clerkSubject", identity.tokenIdentifier),
       )
       .unique();
     if (existing) {
@@ -43,7 +43,7 @@ export const ensureCurrent = mutation({
     }
     const now = Date.now();
     return await ctx.db.insert("listenerProfiles", {
-      clerkSubject: identity.subject,
+      clerkSubject: identity.tokenIdentifier,
       createdAt: now,
       ...(identity.email === undefined ? {} : { email: identity.email }),
       preferredGenres: [...new Set(args.preferredGenres)].slice(0, 8),

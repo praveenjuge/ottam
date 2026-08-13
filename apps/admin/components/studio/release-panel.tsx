@@ -17,6 +17,7 @@ export function ReleasePanel({ episodeId }: { episodeId: Id<"episodes"> }) {
   const publish = useAction(api.publishingNode.publishEpisode);
   const [report, setReport] = useState<Report>();
   const [message, setMessage] = useState<string>();
+  const [publishConfirmation, setPublishConfirmation] = useState("");
   const [working, setWorking] = useState(false);
 
   async function runValidation() {
@@ -32,6 +33,7 @@ export function ReleasePanel({ episodeId }: { episodeId: Id<"episodes"> }) {
   }
 
   async function publishRelease() {
+    if (publishConfirmation !== "PUBLISH") return;
     setWorking(true);
     setMessage(undefined);
     try {
@@ -40,6 +42,7 @@ export function ReleasePanel({ episodeId }: { episodeId: Id<"episodes"> }) {
         episodeId,
         humanIntentNonce: crypto.randomUUID(),
       });
+      setPublishConfirmation("");
       setMessage(`Release ${String(result.releaseNumber)} is published.`);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Publishing failed.");
@@ -56,7 +59,11 @@ export function ReleasePanel({ episodeId }: { episodeId: Id<"episodes"> }) {
         the human-only publish action becomes available.
       </p>
       {report ? (
-        <div className="validation-result" data-valid={report.valid}>
+        <div
+          aria-live="polite"
+          className="validation-result"
+          data-valid={report.valid}
+        >
           <strong>{report.valid ? "Ready" : "Not ready"}</strong>
           <span>{report.durationPlanCount}/46 plans</span>
           {report.issues.map((issue) => (
@@ -72,14 +79,32 @@ export function ReleasePanel({ episodeId }: { episodeId: Id<"episodes"> }) {
         >
           Validate
         </Button>
+        <label className="publish-confirmation">
+          Type PUBLISH to confirm this immutable release
+          <input
+            autoCapitalize="characters"
+            autoComplete="off"
+            onChange={(event) => {
+              setPublishConfirmation(event.target.value);
+            }}
+            spellCheck={false}
+            value={publishConfirmation}
+          />
+        </label>
         <Button
-          disabled={working || !report?.valid}
+          disabled={
+            working || !report?.valid || publishConfirmation !== "PUBLISH"
+          }
           onClick={() => void publishRelease()}
         >
           Publish immutable release
         </Button>
       </div>
-      {message ? <p className="release-message">{message}</p> : null}
+      {message ? (
+        <p aria-live="polite" className="release-message">
+          {message}
+        </p>
+      ) : null}
     </section>
   );
 }

@@ -1,6 +1,7 @@
 {
   "name": "@ottam/admin",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "next build",
     "convex:codegen": "convex codegen",
@@ -43,10 +44,13 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@edge-runtime/vm": "^5.0.0",
     "@ottam/story-fixtures": "workspace:*",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
-    "tailwindcss": "^4.3.3"
+    "convex-test": "^0.0.55",
+    "tailwindcss": "^4.3.3",
+    "vite": "^8.2.1"
   }
 }

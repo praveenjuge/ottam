@@ -51,7 +51,6 @@ import {
   ToolInput,
   ToolOutput,
 } from "@/components/ai-elements/tool";
-import { Button } from "@/components/ui/button";
 import type { ProductionMessage } from "@/lib/production-agent";
 import { generationRequestSchema } from "@/lib/media/generation-contract";
 import { audioAssignmentSchema } from "@/lib/media/audio-assignment";
@@ -418,7 +417,11 @@ function ChatSurface({
         </ConversationContent>
         <ConversationScrollButton />
       </Conversation>
-      {error ? <p className="chat-error">{error.message}</p> : null}
+      {error ? (
+        <p aria-live="polite" className="chat-error">
+          {error.message}
+        </p>
+      ) : null}
       <PromptInput
         className="studio-prompt"
         onSubmit={({ text }) => {
@@ -426,7 +429,11 @@ function ChatSurface({
         }}
       >
         <PromptInputBody>
-          <PromptInputTextarea placeholder="Develop the transcript, check continuity, or preview a duration…" />
+          <PromptInputTextarea
+            aria-label="Episode production request"
+            autoComplete="off"
+            placeholder="Develop the transcript, check continuity, or preview a duration…"
+          />
         </PromptInputBody>
         <PromptInputFooter>
           <span className="model-label">
@@ -448,8 +455,10 @@ function Inspector({ workspace }: { workspace: Workspace }) {
   const validationReady =
     workspace.audioAssets.length > 0 && workspace.scenes.length > 0;
   return (
-    <aside className="studio-inspector">
-      <p className="nav-label">Episode state</p>
+    <aside aria-labelledby="inspector-heading" className="studio-inspector">
+      <h2 className="nav-label" id="inspector-heading">
+        Episode state
+      </h2>
       <dl className="episode-facts">
         <div>
           <dt>Revision</dt>
@@ -484,14 +493,10 @@ function Inspector({ workspace }: { workspace: Workspace }) {
           <p>No proposals yet.</p>
         ) : (
           workspace.changeSets.slice(0, 8).map((changeSet) => (
-            <Button
-              className="proposal-row"
-              key={changeSet._id}
-              variant="ghost"
-            >
+            <article className="proposal-row" key={changeSet._id}>
               <span>{parseStoredProposal(changeSet.changeJson).summary}</span>
               <small>{changeSet.status}</small>
-            </Button>
+            </article>
           ))
         )}
       </section>

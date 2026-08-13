@@ -14,7 +14,7 @@ export const viewer = query({
     return {
       email: identity.email ?? "",
       isAdmin: true as const,
-      subject: identity.subject,
+      subject: identity.tokenIdentifier,
     };
   },
 });

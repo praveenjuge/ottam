@@ -3,6 +3,7 @@ import { bytesToHex } from "@noble/hashes/utils.js";
 import { ConvexError, v } from "convex/values";
 import type { Doc, Id } from "./_generated/dataModel";
 import { internalMutation, type MutationCtx } from "./_generated/server";
+import { canStartAgentRun } from "./lib/agentRunPolicy";
 import {
   parseStoredProposal,
   stableJson,
@@ -283,6 +284,24 @@ export const beginAgentRun = internalMutation({
     if (!chat) {
       throw new ConvexError({ code: "NOT_FOUND", message: "Chat not found." });
     }
+    const now = Date.now();
+    const recentRuns = await ctx.db
+      .query("agentRuns")
+      .withIndex("by_chat_and_started", (queryBuilder) =>
+        queryBuilder.eq("chatId", args.chatId).gte("startedAt", now - 60_000),
+      )
+      .take(6);
+    if (
+      !canStartAgentRun(
+        recentRuns.map((run) => run.startedAt),
+        now,
+      )
+    ) {
+      throw new ConvexError({
+        code: "RATE_LIMITED",
+        message: "Wait before starting another production chat turn.",
+      });
+    }
     return ctx.db.insert("agentRuns", {
       ...(args.baseRevisionId === undefined
         ? {}
@@ -291,7 +310,7 @@ export const beginAgentRun = internalMutation({
       episodeId: chat.episodeId,
       model: args.model,
       runId: args.runId,
-      startedAt: Date.now(),
+      startedAt: now,
       status: "running",
     });
   },

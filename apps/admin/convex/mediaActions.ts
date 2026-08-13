@@ -66,7 +66,7 @@ export const proposeAudioAssignment = action({
     };
     const assignmentHash = hash(assignment);
     return ctx.runMutation(internal.mediaInternal.proposeAudioAssignment, {
-      actorSubject: identity.subject,
+      actorSubject: identity.tokenIdentifier,
       agentRunId: args.agentRunId,
       assignmentHash,
       assignmentJson: stableJson(assignment),
@@ -128,7 +128,7 @@ export const proposeAudioGeneration = action({
     const result = await ctx.runMutation(
       internal.mediaInternal.proposeAudioGeneration,
       {
-        actorSubject: identity.subject,
+        actorSubject: identity.tokenIdentifier,
         agentRunId: args.agentRunId,
         episodeId: args.episodeId,
         requestHash,
@@ -152,7 +152,7 @@ export const approveAudioGeneration = action({
     const identity = await requireAdmin(ctx);
     return ctx.runMutation(internal.mediaInternal.approveAudioGeneration, {
       ...args,
-      actorSubject: identity.subject,
+      actorSubject: identity.tokenIdentifier,
     });
   },
 });
@@ -164,7 +164,7 @@ export const rejectAudioGeneration = action({
     const identity = await requireAdmin(ctx);
     return ctx.runMutation(internal.mediaInternal.rejectAudioGeneration, {
       ...args,
-      actorSubject: identity.subject,
+      actorSubject: identity.tokenIdentifier,
     });
   },
 });
@@ -180,7 +180,7 @@ export const approveAudioAssignment = action({
     const identity = await requireAdmin(ctx);
     return ctx.runMutation(internal.mediaInternal.approveAudioAssignment, {
       ...args,
-      actorSubject: identity.subject,
+      actorSubject: identity.tokenIdentifier,
     });
   },
 });
@@ -196,7 +196,7 @@ export const applyAudioAssignment = action({
     const identity = await requireAdmin(ctx);
     return ctx.runMutation(internal.mediaInternal.applyAudioAssignment, {
       ...args,
-      actorSubject: identity.subject,
+      actorSubject: identity.tokenIdentifier,
     });
   },
 });

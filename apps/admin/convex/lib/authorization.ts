@@ -17,6 +17,19 @@ export function isAdminEmail(
   );
 }
 
+export function isAdminIdentity(
+  identity: { email?: string; subject: string },
+  configuredUserId: string,
+  configuredEmail?: string,
+): boolean {
+  if (identity.subject !== configuredUserId) return false;
+  return (
+    configuredEmail === undefined ||
+    identity.email === undefined ||
+    isAdminEmail(identity.email, configuredEmail)
+  );
+}
+
 export async function requireIdentity(ctx: AuthContext) {
   const identity = await ctx.auth.getUserIdentity();
   if (!identity) {
@@ -30,14 +43,20 @@ export async function requireIdentity(ctx: AuthContext) {
 
 export async function requireAdmin(ctx: AuthContext) {
   const identity = await requireIdentity(ctx);
-  const configuredAdmin = process.env.OTTAM_ADMIN_EMAIL;
-  if (!configuredAdmin) {
+  const configuredUserId = process.env.OTTAM_ADMIN_CLERK_USER_ID;
+  if (!configuredUserId) {
     throw new ConvexError({
       code: "MISCONFIGURED",
       message: "Admin access is not configured.",
     });
   }
-  if (!isAdminEmail(identity.email, configuredAdmin)) {
+  if (
+    !isAdminIdentity(
+      identity,
+      configuredUserId,
+      process.env.OTTAM_ADMIN_EMAIL,
+    )
+  ) {
     throw new ConvexError({
       code: "FORBIDDEN",
       message: "Administrator access is required.",

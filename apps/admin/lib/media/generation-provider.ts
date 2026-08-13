@@ -1,5 +1,46 @@
 import type { GenerationRequest } from "./generation-contract";
 
+const maximumGeneratedAudioBytes = 100_000_000;
+
+async function readAudioResponse(response: Response): Promise<Uint8Array> {
+  const contentType = response.headers.get("content-type")?.split(";", 1)[0];
+  const declaredLength = Number(response.headers.get("content-length"));
+  if (
+    contentType !== "audio/mpeg" ||
+    (Number.isFinite(declaredLength) &&
+      declaredLength > maximumGeneratedAudioBytes)
+  ) {
+    throw new Error("ElevenLabs returned an unsupported audio response.");
+  }
+  const body = response.body as ReadableStream<Uint8Array> | null;
+  if (body === null) {
+    throw new Error("ElevenLabs returned an empty audio response.");
+  }
+  const chunks: Uint8Array[] = [];
+  let totalBytes = 0;
+  const reader = body.getReader();
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    totalBytes += value.byteLength;
+    if (totalBytes > maximumGeneratedAudioBytes) {
+      await reader.cancel();
+      throw new Error("ElevenLabs audio exceeds the maximum supported size.");
+    }
+    chunks.push(value);
+  }
+  if (totalBytes < 1) {
+    throw new Error("ElevenLabs returned an empty audio response.");
+  }
+  const bytes = new Uint8Array(totalBytes);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return bytes;
+}
+
 export interface GeneratedCandidate {
   bytes: Uint8Array;
   characterCost: number;
@@ -66,6 +107,7 @@ export class ElevenLabsAudioGenerationProvider implements AudioGenerationProvide
           "xi-api-key": this.apiKey,
         },
         method: "POST",
+        signal: AbortSignal.timeout(60_000),
       },
     );
     if (!response.ok) {
@@ -85,7 +127,7 @@ export class ElevenLabsAudioGenerationProvider implements AudioGenerationProvide
       throw new Error("ElevenLabs returned ambiguous generation metadata.");
     }
     return {
-      bytes: new Uint8Array(await response.arrayBuffer()),
+      bytes: await readAudioResponse(response),
       characterCost,
       mimeType: "audio/mpeg",
       providerRequestId: requestId,

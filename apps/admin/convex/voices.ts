@@ -1,14 +1,19 @@
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { requireAdmin } from "./lib/authorization";
+import { voiceDocument } from "./lib/documentValidators";
 
 export const listApproved = query({
   args: {},
+  returns: v.array(voiceDocument),
   handler: async (ctx) => {
     await requireAdmin(ctx);
-    return (await ctx.db.query("voices").collect()).filter(
-      (voice) => voice.status === "approved",
-    );
+    return ctx.db
+      .query("voices")
+      .withIndex("by_status", (queryBuilder) =>
+        queryBuilder.eq("status", "approved"),
+      )
+      .take(250);
   },
 });
 

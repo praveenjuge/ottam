@@ -80,7 +80,7 @@ export function LibrarySetup() {
   const hasSeries = series.length > 0;
 
   return (
-    <main className="setup-shell">
+    <main className="setup-shell" id="main-content">
       <p className="eyebrow">Ottam production</p>
       <h1>
         {hasSeries ? "Create the first episode" : "Create the first series"}
@@ -98,7 +98,7 @@ export function LibrarySetup() {
         >
           <label>
             Series
-            <select name="seriesId" required>
+            <select autoComplete="off" name="seriesId" required>
               {series.map((item) => (
                 <option key={item.id} value={item.id}>
                   {item.title}
@@ -109,19 +109,21 @@ export function LibrarySetup() {
           <label>
             Episode title
             <Input
+              autoComplete="off"
               name="title"
               required
               maxLength={120}
-              placeholder="Someone Is Listening"
+              placeholder="For example, Someone Is Listening…"
             />
           </label>
           <label>
             Story intent
             <Textarea
+              autoComplete="off"
               name="synopsis"
               required
               maxLength={2000}
-              placeholder="The listener intercepts a transmission that should not exist."
+              placeholder="For example, the listener intercepts a transmission that should not exist…"
             />
           </label>
           <Button disabled={working} type="submit">
@@ -138,28 +140,31 @@ export function LibrarySetup() {
           <label>
             Series title
             <Input
+              autoComplete="off"
               name="title"
               required
               maxLength={120}
-              placeholder="The Signal"
+              placeholder="For example, The Signal…"
             />
           </label>
           <label>
             Genre
             <Input
+              autoComplete="off"
               name="genre"
               required
               maxLength={80}
-              placeholder="Sci-fi thriller"
+              placeholder="For example, sci-fi thriller…"
             />
           </label>
           <label>
             Series premise
             <Textarea
+              autoComplete="off"
               name="description"
               required
               maxLength={2000}
-              placeholder="A transmission follows you through a city that has gone quiet."
+              placeholder="For example, a transmission follows you through a city that has gone quiet…"
             />
           </label>
           <Button disabled={working} type="submit">
@@ -167,7 +172,11 @@ export function LibrarySetup() {
           </Button>
         </form>
       )}
-      {error ? <p className="form-error">{error}</p> : null}
+      {error ? (
+        <p aria-live="polite" className="form-error">
+          {error}
+        </p>
+      ) : null}
     </main>
   );
 }

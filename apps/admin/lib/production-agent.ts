@@ -246,7 +246,7 @@ function createProductionTools({
   };
 }
 
-type ProductionTools = ReturnType<typeof createProductionTools>;
+export type ProductionTools = ReturnType<typeof createProductionTools>;
 
 export function createProductionAgent(
   args: ProductionAgentArguments,

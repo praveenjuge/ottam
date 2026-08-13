@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./styles.css";
@@ -13,13 +13,21 @@ export const metadata: Metadata = {
   description: "Private production studio for Ottam episodes.",
 };
 
+export const viewport: Viewport = {
+  colorScheme: "dark",
+  themeColor: "#0c0d0c",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
   return (
     <html className={cn("dark font-sans", geist.variable)} lang="en">
       <body>
-        <ClerkProvider>
+        <a className="skip-link" href="#main-content">
+          Skip to main content
+        </a>
+        <ClerkProvider afterSignOutUrl="/" dynamic>
           <Providers>{children}</Providers>
         </ClerkProvider>
       </body>

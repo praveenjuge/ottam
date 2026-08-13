@@ -2,9 +2,10 @@
 
 import { ConvexError, v } from "convex/values";
 import { internal } from "./_generated/api";
-import type { Id } from "./_generated/dataModel";
+import type { Doc, Id } from "./_generated/dataModel";
 import { action } from "./_generated/server";
 import { requireAdmin } from "./lib/authorization";
+import { generationJobStatus } from "./lib/documentValidators";
 import {
   ElevenLabsAudioGenerationProvider,
   type AudioGenerationProvider,
@@ -46,13 +47,18 @@ export const generateAudioCandidates = action({
     requestHash: v.string(),
     toolInvocationId: v.id("toolInvocations"),
   },
+  returns: v.object({
+    candidateAssetIds: v.array(v.id("audioAssets")),
+    jobId: v.id("generationJobs"),
+    status: generationJobStatus,
+  }),
   handler: async (
     ctx,
     args,
   ): Promise<{
     candidateAssetIds: Id<"audioAssets">[];
     jobId: Id<"generationJobs">;
-    status: string;
+    status: Doc<"generationJobs">["status"];
   }> => {
     const identity = await requireAdmin(ctx);
     const invocation = await ctx.runQuery(
@@ -93,7 +99,7 @@ export const generateAudioCandidates = action({
     const claim = await ctx.runMutation(
       internal.mediaInternal.claimGenerationJob,
       {
-        actorSubject: identity.subject,
+        actorSubject: identity.tokenIdentifier,
         dailyCreditCeiling: dailyCeiling(),
         dailyCreditDate: todayUtc(),
         episodeId: args.episodeId,

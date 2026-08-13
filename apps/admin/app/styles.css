@@ -55,6 +55,28 @@
 body {
   margin: 0;
   min-width: 20rem;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: color-mix(
+    in srgb,
+    var(--primary) 20%,
+    transparent
+  );
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 100;
+  top: 0.75rem;
+  left: 0.75rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: var(--radius);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  transform: translateY(-200%);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
 }
 
 .eyebrow {
@@ -193,6 +215,13 @@ p {
   background: transparent;
   color: var(--foreground);
   text-align: left;
+  touch-action: manipulation;
+}
+
+.episode-nav-item:focus-visible,
+.setup-form select:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--ring) 55%, transparent);
+  outline-offset: 2px;
 }
 
 .episode-nav-item:hover,
@@ -236,6 +265,7 @@ p {
 .episode-header h1 {
   font-size: 1.2rem;
   letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 
 .status-pill {
@@ -407,13 +437,24 @@ p {
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 .audio-proposal {
   display: grid;
   gap: 0.8rem;
   padding: 1rem;
-  border: 1px solid var(--line);
+  border: 1px solid var(--border);
   border-radius: 1rem;
-  background: color-mix(in srgb, var(--panel) 88%, var(--accent));
+  background: color-mix(in srgb, var(--card) 88%, var(--accent));
 }
 
 .audio-cost {
@@ -427,7 +468,7 @@ p {
 .audio-proposal dt,
 .audio-proposal article > span,
 .candidate-loading {
-  color: var(--muted);
+  color: var(--muted-foreground);
   font-size: 0.78rem;
 }
 
@@ -450,7 +491,7 @@ p {
 .audio-proposal pre {
   padding: 0.75rem;
   border-radius: 0.7rem;
-  background: var(--surface);
+  background: var(--secondary);
 }
 
 .audio-proposal article p {
@@ -473,7 +514,7 @@ p {
   display: grid;
   gap: 0.7rem;
   padding-top: 1rem;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--border);
 }
 
 .release-panel h2,
@@ -483,7 +524,7 @@ p {
 
 .release-panel > p,
 .release-message {
-  color: var(--muted);
+  color: var(--muted-foreground);
   font-size: 0.8rem;
 }
 
@@ -491,16 +532,37 @@ p {
   display: grid;
   gap: 0.25rem;
   padding: 0.75rem;
-  border: 1px solid var(--line);
+  border: 1px solid var(--border);
   border-radius: 0.75rem;
 }
 
 .validation-result[data-valid="true"] {
-  border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+  border-color: color-mix(in srgb, var(--primary) 55%, var(--border));
 }
 
 .validation-result small {
-  color: var(--muted);
+  color: var(--muted-foreground);
+}
+
+.publish-confirmation {
+  display: grid;
+  gap: 0.4rem;
+  color: var(--muted-foreground);
+  font-size: 0.78rem;
+}
+
+.publish-confirmation input {
+  min-height: 2.5rem;
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+  padding: 0 0.7rem;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.publish-confirmation input:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--ring) 55%, transparent);
+  outline-offset: 2px;
 }
 
 .release-actions {

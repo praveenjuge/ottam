@@ -58,3 +58,13 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.praveenjuge.ottam.tests
+  OttamUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - OttamUITests
+    dependencies:
+      - target: Ottam
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.praveenjuge.ottam.ui-tests

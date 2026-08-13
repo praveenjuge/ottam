@@ -14,6 +14,7 @@ struct RunView: View {
   @State private var errorMessage: String?
   @State private var run: RunSessionRecord?
   @State private var savedRun = false
+  @ScaledMetric(relativeTo: .largeTitle) private var timerSize = 58.0
 
   private var movementLabel: String {
     controller.isPaused ? "PAUSED" : controller.movement.rawValue.uppercased()
@@ -30,6 +31,7 @@ struct RunView: View {
         HStack {
           Button("Close", systemImage: "xmark") { dismiss() }
             .labelStyle(.iconOnly)
+            .accessibilityLabel("Close episode")
             .buttonStyle(.bordered)
           Spacer()
           Text(movementLabel)
@@ -43,7 +45,8 @@ struct RunView: View {
             .font(.title2.weight(.semibold))
             .multilineTextAlignment(.center)
           Text(time(controller.remainingSeconds))
-            .font(.system(size: 58, weight: .light, design: .rounded))
+            .font(.system(size: timerSize, weight: .light, design: .rounded))
+            .dynamicTypeSize(...DynamicTypeSize.accessibility3)
             .monospacedDigit()
             .accessibilityLabel("\(controller.remainingSeconds) seconds remaining")
         }
@@ -56,6 +59,7 @@ struct RunView: View {
         }
         if let errorMessage {
           Text(errorMessage).foregroundStyle(.red)
+            .accessibilityAddTraits(.isStaticText)
         }
         Spacer()
         Button {
@@ -209,6 +213,7 @@ private struct CompletionView: View {
       Image(systemName: "checkmark.circle.fill")
         .font(.system(size: 64))
         .foregroundStyle(.orange)
+        .accessibilityHidden(true)
       Text("Episode complete").font(.title.weight(.bold))
       Text(title).foregroundStyle(.secondary)
       if let run {

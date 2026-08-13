@@ -98,10 +98,10 @@ export const publishEpisode = action({
     const reserved = await ctx.runMutation(
       internal.publishingInternal.reserveRelease,
       {
-        actorSubject: identity.subject,
+        actorSubject: identity.tokenIdentifier,
         episodeId: args.episodeId,
         idempotencyKey: hash(
-          `${identity.subject}:${args.episodeId}:${revisionId}:${args.humanIntentNonce}`,
+          `${identity.tokenIdentifier}:${args.episodeId}:${revisionId}:${args.humanIntentNonce}`,
         ),
         revisionId,
       },
@@ -164,7 +164,7 @@ export const publishEpisode = action({
         key: manifestKey,
       });
       await ctx.runMutation(internal.publishingInternal.finalizeRelease, {
-        actorSubject: identity.subject,
+        actorSubject: identity.tokenIdentifier,
         assetKeys: [...selectedKeys].sort(),
         manifestChecksumSha256: uploaded.checksum,
         manifestKey,

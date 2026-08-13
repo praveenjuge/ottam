@@ -43,7 +43,7 @@ async function listenerSubject(ctx: MutationCtx): Promise<string> {
       message: "Sign in to sync listener progress.",
     });
   }
-  return identity.subject;
+  return identity.tokenIdentifier;
 }
 
 function validateProgress(args: {
@@ -135,10 +135,7 @@ async function upsertProgress(
 ) {
   validateProgress(args);
   const release = await ctx.db.get(args.releaseId);
-  if (
-    release?.status !== "published" ||
-    release.episodeId !== args.episodeId
-  ) {
+  if (release?.status !== "published" || release.episodeId !== args.episodeId) {
     throw new ConvexError({
       code: "INVALID_RELEASE",
       message: "Progress must reference a published episode release.",
@@ -147,7 +144,9 @@ async function upsertProgress(
   const existing = await ctx.db
     .query("episodeProgress")
     .withIndex("by_listener_and_episode", (queryBuilder) =>
-      queryBuilder.eq("listenerSubject", listener).eq("episodeId", args.episodeId),
+      queryBuilder
+        .eq("listenerSubject", listener)
+        .eq("episodeId", args.episodeId),
     )
     .unique();
   if (!shouldApplyProgress(existing?.clientSequence, args.clientSequence)) {
@@ -265,7 +264,10 @@ export const mergeGuestState = mutation({
         )
         .unique();
       if (!existing) {
-        await ctx.db.insert("runSessions", { ...run, listenerSubject: subject });
+        await ctx.db.insert("runSessions", {
+          ...run,
+          listenerSubject: subject,
+        });
         mergedRuns += 1;
       }
     }
@@ -333,13 +335,13 @@ export const myState = query({
       ctx.db
         .query("episodeProgress")
         .withIndex("by_listener_and_updated", (queryBuilder) =>
-          queryBuilder.eq("listenerSubject", identity.subject),
+          queryBuilder.eq("listenerSubject", identity.tokenIdentifier),
         )
         .collect(),
       ctx.db
         .query("runSessions")
         .withIndex("by_listener_and_started", (queryBuilder) =>
-          queryBuilder.eq("listenerSubject", identity.subject),
+          queryBuilder.eq("listenerSubject", identity.tokenIdentifier),
         )
         .order("desc")
         .take(100),

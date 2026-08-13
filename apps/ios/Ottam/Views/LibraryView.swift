@@ -47,6 +47,8 @@ private struct LocalEpisodeView: View {
         Text("\(Int(duration)) minutes")
           .font(.title2.weight(.semibold))
         Slider(value: $duration, in: 15 ... 60, step: 1)
+          .accessibilityLabel("Session duration")
+          .accessibilityValue("\(Int(duration)) minutes")
       }
       Button("Start episode", systemImage: "figure.run") {
         showRun = true

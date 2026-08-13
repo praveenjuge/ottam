@@ -1,17 +1,40 @@
 import { auth } from "@clerk/nextjs/server";
 import { ConvexHttpClient } from "convex/browser";
-import { consumeStream, createAgentUIStreamResponse } from "ai";
+import {
+  consumeStream,
+  createAgentUIStreamResponse,
+  safeValidateUIMessages,
+  type InferUITools,
+  type UIDataTypes,
+  type UIMessage,
+} from "ai";
 import { nanoid } from "nanoid";
 import { z } from "zod";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { mergeIncomingMessage } from "@/lib/chat-message-policy";
 import {
   createProductionAgent,
   type ProductionMessage,
+  type ProductionTools,
 } from "@/lib/production-agent";
 import { getStudioModelId } from "@/lib/studio-model";
 
 export const maxDuration = 300;
+const maximumRequestBytes = 256_000;
+const opaqueIdPattern = /^[A-Za-z0-9_-]{8,128}$/;
+
+type ValidatableProductionMessage = UIMessage<
+  unknown,
+  UIDataTypes,
+  InferUITools<ProductionTools>
+>;
+
+const messageEnvelopeSchema = z.looseObject({
+  id: z.string().regex(opaqueIdPattern),
+  parts: z.array(z.unknown()).min(1).max(128),
+  role: z.enum(["user", "assistant"]),
+});
 
 const requestSchema = z
   .object({
@@ -22,32 +45,28 @@ const requestSchema = z
   .strict();
 
 function jsonError(message: string, status: number): Response {
-  return Response.json({ error: message }, { status });
+  return Response.json(
+    { error: message },
+    { headers: { "Cache-Control": "no-store" }, status },
+  );
+}
+
+async function readRequest(request: Request) {
+  const declaredLength = Number(request.headers.get("content-length"));
+  if (Number.isFinite(declaredLength) && declaredLength > maximumRequestBytes) {
+    return null;
+  }
+  const body = await request.text();
+  if (new TextEncoder().encode(body).byteLength > maximumRequestBytes) {
+    return null;
+  }
+  return requestSchema.parse(JSON.parse(body) as unknown);
 }
 
 function parseStoredMessages(
   rows: { contentJson: string }[],
 ): ProductionMessage[] {
   return rows.map((row) => JSON.parse(row.contentJson) as ProductionMessage);
-}
-
-function mergeIncomingMessage(
-  persisted: ProductionMessage[],
-  incoming: ProductionMessage,
-): ProductionMessage[] {
-  if (incoming.role !== "user" && incoming.role !== "assistant") {
-    throw new Error("Only user or assistant chat messages are accepted.");
-  }
-  const existingIndex = persisted.findIndex(
-    (message) => message.id === incoming.id,
-  );
-  if (existingIndex === -1) return [...persisted, incoming];
-  if (persisted[existingIndex]?.role !== incoming.role) {
-    throw new Error("A persisted message role cannot be changed.");
-  }
-  return persisted.map((message, index) =>
-    index === existingIndex ? incoming : message,
-  );
 }
 
 export async function POST(request: Request): Promise<Response> {
@@ -59,11 +78,14 @@ export async function POST(request: Request): Promise<Response> {
     return jsonError("Studio authentication is not configured.", 503);
   }
 
-  let parsedRequest: z.infer<typeof requestSchema>;
+  let parsedRequest: z.infer<typeof requestSchema> | null;
   try {
-    parsedRequest = requestSchema.parse(await request.json());
+    parsedRequest = await readRequest(request);
   } catch {
     return jsonError("Invalid studio chat request.", 400);
+  }
+  if (!parsedRequest) {
+    return jsonError("Studio chat request is too large.", 413);
   }
 
   const episodeId = parsedRequest.episodeId as Id<"episodes">;
@@ -71,21 +93,16 @@ export async function POST(request: Request): Promise<Response> {
   const client = new ConvexHttpClient(convexUrl);
   client.setAuth(convexToken);
 
+  let activeRunId: string | undefined;
   try {
     const workspace = await client.query(api.studio.workspace, { episodeId });
     if (workspace.chat?._id !== chatId) {
       return jsonError("Chat does not belong to the selected episode.", 403);
     }
-    const incoming = parsedRequest.message as ProductionMessage;
+    const incomingEnvelope = messageEnvelopeSchema.parse(parsedRequest.message);
+    const incoming = incomingEnvelope as ProductionMessage;
     const persisted = parseStoredMessages(workspace.messages);
     const messages = mergeIncomingMessage(persisted, incoming);
-    await client.action(api.studioActions.saveMessage, {
-      chatId,
-      contentJson: JSON.stringify(incoming),
-      messageId: incoming.id,
-      role: incoming.role === "user" ? "user" : "assistant",
-    });
-
     const runId = `run_${nanoid(20)}`;
     const model = getStudioModelId();
     const agentRunId = await client.action(api.studioActions.beginAgentRun, {
@@ -96,6 +113,7 @@ export async function POST(request: Request): Promise<Response> {
       model,
       runId,
     });
+    activeRunId = runId;
     let inputTokens = 0;
     let outputTokens = 0;
     const agent = createProductionAgent({
@@ -104,36 +122,79 @@ export async function POST(request: Request): Promise<Response> {
       client,
       episodeId,
     });
+    const validation =
+      await safeValidateUIMessages<ValidatableProductionMessage>({
+        messages,
+        tools: agent.tools,
+      });
+    if (!validation.success) {
+      await client.action(api.studioActions.finishAgentRun, {
+        runId,
+        status: "failed",
+      });
+      activeRunId = undefined;
+      return jsonError("Invalid production chat message.", 400);
+    }
+    const acceptedIncoming = validation.data.find(
+      (message) => message.id === incoming.id,
+    );
+    if (!acceptedIncoming) {
+      throw new Error(
+        "The incoming message was not retained after validation.",
+      );
+    }
+    await client.action(api.studioActions.saveMessage, {
+      chatId,
+      contentJson: JSON.stringify(acceptedIncoming),
+      messageId: incoming.id,
+      role: incomingEnvelope.role,
+    });
 
     return await createAgentUIStreamResponse({
       agent,
       consumeSseStream: consumeStream,
       onEnd: async ({ isAborted, responseMessage }) => {
-        await client.action(api.studioActions.saveMessage, {
-          chatId,
-          contentJson: JSON.stringify(responseMessage),
-          messageId: responseMessage.id,
-          role: "assistant",
-        });
-        await client.action(api.studioActions.finishAgentRun, {
-          outputTokens,
-          promptTokens: inputTokens,
-          runId,
-          status: isAborted ? "cancelled" : "completed",
-        });
+        try {
+          await client.action(api.studioActions.saveMessage, {
+            chatId,
+            contentJson: JSON.stringify(responseMessage),
+            messageId: responseMessage.id,
+            role: "assistant",
+          });
+          await client.action(api.studioActions.finishAgentRun, {
+            outputTokens,
+            promptTokens: inputTokens,
+            runId,
+            status: isAborted ? "cancelled" : "completed",
+          });
+        } catch (error) {
+          await client.action(api.studioActions.finishAgentRun, {
+            runId,
+            status: "failed",
+          });
+          throw error;
+        }
       },
       onError: () => "The production agent could not complete this turn.",
       onStepEnd: ({ usage }) => {
         inputTokens += usage.inputTokens ?? 0;
         outputTokens += usage.outputTokens ?? 0;
       },
-      originalMessages: messages,
+      originalMessages: validation.data as ProductionMessage[],
       timeout: { totalMs: 240_000 },
-      uiMessages: messages,
+      uiMessages: validation.data,
     });
-  } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Studio request failed.";
-    return jsonError(message, 400);
+  } catch {
+    if (activeRunId) {
+      try {
+        await client.action(api.studioActions.finishAgentRun, {
+          runId: activeRunId,
+          status: "failed",
+        });
+      } catch {
+        // Preserve the original failure response; Convex logs the cleanup error.
+      }
+    }
+    return jsonError("Studio request failed.", 500);
   }
 }

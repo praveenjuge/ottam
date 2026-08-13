@@ -10,7 +10,9 @@
 
 import type * as admin from "../admin.js";
 import type * as catalog from "../catalog.js";
+import type * as lib_agentRunPolicy from "../lib/agentRunPolicy.js";
 import type * as lib_authorization from "../lib/authorization.js";
+import type * as lib_documentValidators from "../lib/documentValidators.js";
 import type * as lib_listenerPolicy from "../lib/listenerPolicy.js";
 import type * as lib_studioPolicy from "../lib/studioPolicy.js";
 import type * as listener from "../listener.js";
@@ -38,7 +40,9 @@ import type {
 declare const fullApi: ApiFromModules<{
   admin: typeof admin;
   catalog: typeof catalog;
+  "lib/agentRunPolicy": typeof lib_agentRunPolicy;
   "lib/authorization": typeof lib_authorization;
+  "lib/documentValidators": typeof lib_documentValidators;
   "lib/listenerPolicy": typeof lib_listenerPolicy;
   "lib/studioPolicy": typeof lib_studioPolicy;
   listener: typeof listener;

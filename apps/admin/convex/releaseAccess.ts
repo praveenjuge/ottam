@@ -3,10 +3,7 @@
 import { ConvexError, v } from "convex/values";
 import { internal } from "./_generated/api";
 import { action } from "./_generated/server";
-import {
-  r2Configuration,
-  signedReleaseReadUrl,
-} from "../lib/media/r2";
+import { r2Configuration, signedReleaseReadUrl } from "../lib/media/r2";
 
 interface ReleaseAccessResult {
   assets: { key: string; url: string }[];

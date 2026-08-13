@@ -29,12 +29,20 @@
 		BF9DF2BD7BB308B9D53D22DC /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA60CBB1B2DAF24D796E0C6D /* ActivityView.swift */; };
 		C586BA20F219BC86E786DA5D /* EpisodeSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563036CB94873A2897C807EE /* EpisodeSetupView.swift */; };
 		DCC8D8F2F19E492120C062E4 /* PersistentModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = F84C0B2A755424C592C26EED /* PersistentModels.swift */; };
+		DD8699EC6837D01B9C251B3E /* OttamUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 626B616F82CDAD8615809A1D /* OttamUITests.swift */; };
 		DE63B924A64540A1CE38AC32 /* MotionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFEBC17AFA2331D548F879E5 /* MotionEngine.swift */; };
 		EE02154EA837C613A2E31EF4 /* OttamApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A47E843FF3E0133B95FC71 /* OttamApp.swift */; };
 		F7C5C3A097F8DBF426E72036 /* ConvexConcurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38CA4851EEDECB4A5771E6 /* ConvexConcurrency.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		2CDD77D25F3EAB0057866E4F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 65AB1D4659D57C0F2A1B97A4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DAF199310DAD181275D7BDEF;
+			remoteInfo = Ottam;
+		};
 		7F3508B4046D2118B20B0796 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 65AB1D4659D57C0F2A1B97A4 /* Project object */;
@@ -53,6 +61,7 @@
 		3ADEEDB8E4E46A985F5DE82E /* Ottam.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Ottam.entitlements; sourceTree = "<group>"; };
 		40A47E843FF3E0133B95FC71 /* OttamApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OttamApp.swift; sourceTree = "<group>"; };
 		563036CB94873A2897C807EE /* EpisodeSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeSetupView.swift; sourceTree = "<group>"; };
+		626B616F82CDAD8615809A1D /* OttamUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OttamUITests.swift; sourceTree = "<group>"; };
 		63F6610EABFDFFB316FDC954 /* ProgressSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressSyncService.swift; sourceTree = "<group>"; };
 		68B487825497A2866C189CCC /* OttamTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = OttamTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7FF83430219A9CFE4FD1F691 /* AudioPlaybackEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlaybackEngine.swift; sourceTree = "<group>"; };
@@ -62,6 +71,7 @@
 		9567848A5339A21604E65ABF /* RunView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunView.swift; sourceTree = "<group>"; };
 		95EF58DC748973FD1BB7F1D6 /* RunSessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunSessionController.swift; sourceTree = "<group>"; };
 		996EFF4FB092D567AC506CBC /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
+		C5B2B85C23B79889CA8A1FF9 /* OttamUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = OttamUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D35CF8BE5EB151BA7B38DF8A /* ReleaseDownloadService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseDownloadService.swift; sourceTree = "<group>"; };
 		DA38CA4851EEDECB4A5771E6 /* ConvexConcurrency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvexConcurrency.swift; sourceTree = "<group>"; };
 		E47D72A206F371E4A2071C8D /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -124,11 +134,20 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		63098ED441043E0F073B6F41 /* OttamUITests */ = {
+			isa = PBXGroup;
+			children = (
+				626B616F82CDAD8615809A1D /* OttamUITests.swift */,
+			);
+			path = OttamUITests;
+			sourceTree = "<group>";
+		};
 		7C9F2E9BAFF720AB84BD2163 = {
 			isa = PBXGroup;
 			children = (
 				58F979432637A76881590E16 /* Ottam */,
 				EA4E228FB5FC01897342F869 /* OttamTests */,
+				63098ED441043E0F073B6F41 /* OttamUITests */,
 				B5184CFF197A85C51C71F26C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -152,6 +171,7 @@
 			children = (
 				823B75173A8C4B9ECFC494C5 /* Ottam.app */,
 				68B487825497A2866C189CCC /* OttamTests.xctest */,
+				C5B2B85C23B79889CA8A1FF9 /* OttamUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -208,6 +228,24 @@
 			productReference = 68B487825497A2866C189CCC /* OttamTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		FD86B1DB363B388983744501 /* OttamUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A4D17E821405605DBA7B51EE /* Build configuration list for PBXNativeTarget "OttamUITests" */;
+			buildPhases = (
+				B272B26D295DFCA5FEB4AC8F /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A9115FFFAEF6C68C5886BCB0 /* PBXTargetDependency */,
+			);
+			name = OttamUITests;
+			packageProductDependencies = (
+			);
+			productName = OttamUITests;
+			productReference = C5B2B85C23B79889CA8A1FF9 /* OttamUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -217,6 +255,9 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
+					FD86B1DB363B388983744501 = {
+						TestTargetID = DAF199310DAD181275D7BDEF;
+					};
 				};
 			};
 			buildConfigurationList = E73C947890BE9213F0473165 /* Build configuration list for PBXProject "Ottam" */;
@@ -240,6 +281,7 @@
 			targets = (
 				DAF199310DAD181275D7BDEF /* Ottam */,
 				EB525812FA796A4FAF8E7E0B /* OttamTests */,
+				FD86B1DB363B388983744501 /* OttamUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -290,6 +332,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B272B26D295DFCA5FEB4AC8F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DD8699EC6837D01B9C251B3E /* OttamUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -297,6 +347,11 @@
 			isa = PBXTargetDependency;
 			target = DAF199310DAD181275D7BDEF /* Ottam */;
 			targetProxy = 7F3508B4046D2118B20B0796 /* PBXContainerItemProxy */;
+		};
+		A9115FFFAEF6C68C5886BCB0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DAF199310DAD181275D7BDEF /* Ottam */;
+			targetProxy = 2CDD77D25F3EAB0057866E4F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -316,6 +371,22 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Ottam.app/Ottam";
 			};
 			name = Release;
+		};
+		16D4B9D1CA9636AD2C5CD43F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.praveenjuge.ottam.ui-tests";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Ottam;
+			};
+			name = Debug;
 		};
 		1A43F1941B119CF20D38F4C0 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -412,6 +483,22 @@
 				PRODUCT_NAME = Ottam;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		ACFE1FFC0935A46FC40F7307 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.praveenjuge.ottam.ui-tests";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Ottam;
 			};
 			name = Release;
 		};
@@ -512,6 +599,15 @@
 			buildConfigurations = (
 				1A43F1941B119CF20D38F4C0 /* Debug */,
 				140FE293AB63832D2B8F11A8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A4D17E821405605DBA7B51EE /* Build configuration list for PBXNativeTarget "OttamUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				16D4B9D1CA9636AD2C5CD43F /* Debug */,
+				ACFE1FFC0935A46FC40F7307 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

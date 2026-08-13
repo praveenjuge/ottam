@@ -53,4 +53,19 @@ describe("audio generation providers", () => {
     await expect(provider.generate(request, 0)).rejects.toThrow(/429/);
     expect(fetcher).toHaveBeenCalledTimes(1);
   });
+
+  it("rejects non-audio and oversized responses without retrying", async () => {
+    const headers = {
+      "character-cost": "34",
+      "content-length": "100000001",
+      "content-type": "text/html",
+      "request-id": "request-2",
+    };
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(new Response("unexpected", { headers, status: 200 }));
+    const provider = new ElevenLabsAudioGenerationProvider("test-key", fetcher);
+    await expect(provider.generate(request, 0)).rejects.toThrow(/unsupported/);
+    expect(fetcher).toHaveBeenCalledTimes(1);
+  });
 });

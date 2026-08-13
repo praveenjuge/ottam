@@ -1,6 +1,45 @@
 import { ConvexError, v } from "convex/values";
 import { query } from "./_generated/server";
 import { requireAdmin } from "./lib/authorization";
+import {
+  audioAssetDocument,
+  changeSetDocument,
+  episodeDocument,
+  episodeRevisionDocument,
+  productionChatDocument,
+  sceneDocument,
+  seriesDocument,
+  toolInvocationDocument,
+  voiceDocument,
+} from "./lib/documentValidators";
+
+const workspaceResult = v.object({
+  audioAssets: v.array(audioAssetDocument),
+  changeSets: v.array(changeSetDocument),
+  chat: v.union(v.null(), productionChatDocument),
+  episode: episodeDocument,
+  messages: v.array(
+    v.object({
+      _creationTime: v.number(),
+      _id: v.id("chatMessages"),
+      chatId: v.id("productionChats"),
+      contentJson: v.string(),
+      createdAt: v.number(),
+      messageId: v.string(),
+      role: v.union(
+        v.literal("user"),
+        v.literal("assistant"),
+        v.literal("tool"),
+      ),
+      sequence: v.number(),
+    }),
+  ),
+  revisions: v.array(episodeRevisionDocument),
+  scenes: v.array(sceneDocument),
+  series: v.union(v.null(), seriesDocument),
+  toolInvocations: v.array(toolInvocationDocument),
+  voices: v.array(voiceDocument),
+});
 
 export const listEpisodes = query({
   args: {},
@@ -38,6 +77,7 @@ export const listEpisodes = query({
 
 export const workspace = query({
   args: { episodeId: v.id("episodes") },
+  returns: workspaceResult,
   handler: async (ctx, args) => {
     await requireAdmin(ctx);
     const episode = await ctx.db.get(args.episodeId);
@@ -124,6 +164,38 @@ export const workspace = query({
 
 export const storyContext = query({
   args: { episodeId: v.id("episodes") },
+  returns: v.object({
+    currentEpisodeId: v.id("episodes"),
+    episodes: v.array(
+      v.object({
+        isWritableEpisode: v.boolean(),
+        sequence: v.number(),
+        slug: v.string(),
+        snapshotHash: v.optional(v.string()),
+        synopsis: v.string(),
+        title: v.string(),
+        transcripts: v.array(
+          v.object({
+            kind: v.union(
+              v.literal("core"),
+              v.literal("optional"),
+              v.literal("reactive"),
+            ),
+            script: v.string(),
+            sortOrder: v.number(),
+            stableKey: v.string(),
+            title: v.string(),
+          }),
+        ),
+      }),
+    ),
+    series: v.object({
+      description: v.string(),
+      genre: v.string(),
+      slug: v.string(),
+      title: v.string(),
+    }),
+  }),
   handler: async (ctx, args) => {
     await requireAdmin(ctx);
     const currentEpisode = await ctx.db.get(args.episodeId);

@@ -59,7 +59,7 @@ export const createDraftEpisode = action({
     }
     return ctx.runMutation(internal.studioInternal.createDraftEpisode, {
       ...args,
-      actorSubject: identity.subject,
+      actorSubject: identity.tokenIdentifier,
     });
   },
 });
@@ -71,7 +71,7 @@ export const ensureChat = action({
     const identity = await requireAdmin(ctx);
     return ctx.runMutation(internal.studioInternal.ensureChat, {
       ...args,
-      actorSubject: identity.subject,
+      actorSubject: identity.tokenIdentifier,
     });
   },
 });
@@ -96,7 +96,7 @@ export const saveMessage = action({
     JSON.parse(args.contentJson) as unknown;
     return ctx.runMutation(internal.studioInternal.saveMessage, {
       ...args,
-      actorSubject: identity.subject,
+      actorSubject: identity.tokenIdentifier,
     });
   },
 });
@@ -120,7 +120,7 @@ export const beginAgentRun = action({
     }
     return ctx.runMutation(internal.studioInternal.beginAgentRun, {
       ...args,
-      actorSubject: identity.subject,
+      actorSubject: identity.tokenIdentifier,
     });
   },
 });
@@ -142,7 +142,7 @@ export const finishAgentRun = action({
     assertOpaqueId(args.runId, "Run ID");
     return ctx.runMutation(internal.studioInternal.finishAgentRun, {
       ...args,
-      actorSubject: identity.subject,
+      actorSubject: identity.tokenIdentifier,
     });
   },
 });
@@ -175,7 +175,7 @@ export const proposeChangeSet = action({
       internal.studioInternal.proposeChangeSet,
       {
         ...args,
-        actorSubject: identity.subject,
+        actorSubject: identity.tokenIdentifier,
         proposalHash,
       },
     );
@@ -194,7 +194,7 @@ export const applyChangeSet = action({
     const identity = await requireAdmin(ctx);
     return ctx.runMutation(internal.studioInternal.applyChangeSet, {
       ...args,
-      actorSubject: identity.subject,
+      actorSubject: identity.tokenIdentifier,
     });
   },
 });
@@ -210,7 +210,7 @@ export const approveChangeSet = action({
     const identity = await requireAdmin(ctx);
     return ctx.runMutation(internal.studioInternal.approveChangeSet, {
       ...args,
-      actorSubject: identity.subject,
+      actorSubject: identity.tokenIdentifier,
     });
   },
 });
@@ -222,7 +222,7 @@ export const rejectChangeSet = action({
     const identity = await requireAdmin(ctx);
     return ctx.runMutation(internal.studioInternal.rejectChangeSet, {
       ...args,
-      actorSubject: identity.subject,
+      actorSubject: identity.tokenIdentifier,
     });
   },
 });
