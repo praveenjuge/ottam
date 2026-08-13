@@ -35,7 +35,11 @@ export function CandidateAudio({
   }, [assetId, episodeId, getUrl]);
 
   if (!url)
-    return <p className="candidate-loading">Preparing private preview…</p>;
+    return (
+      <p className="text-xs text-muted-foreground">
+        Preparing private preview…
+      </p>
+    );
   return (
     <AudioPlayer>
       <AudioPlayerElement src={url} />

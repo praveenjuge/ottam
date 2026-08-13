@@ -69,11 +69,11 @@ export function EpisodeCreateDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="episode-create-trigger" variant="outline">
-          New episode
+        <Button size="xs" variant="ghost">
+          Add
         </Button>
       </DialogTrigger>
-      <DialogContent className="episode-create-dialog">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Create an episode</DialogTitle>
           <DialogDescription>
@@ -82,12 +82,17 @@ export function EpisodeCreateDialog({
           </DialogDescription>
         </DialogHeader>
         <form
-          className="setup-form"
+          className="grid gap-4"
           onSubmit={(event) => void handleSubmit(event)}
         >
-          <label>
-            Series
-            <select autoComplete="off" name="seriesId" required>
+          <label className="grid gap-1.5 text-sm font-medium">
+            <span>Series</span>
+            <select
+              autoComplete="off"
+              className="h-8 rounded-lg border border-input bg-input/30 px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+              name="seriesId"
+              required
+            >
               {series?.map((item) => (
                 <option key={item.id} value={item.id}>
                   {item.title}
@@ -95,12 +100,12 @@ export function EpisodeCreateDialog({
               ))}
             </select>
           </label>
-          <label>
-            Episode title
+          <label className="grid gap-1.5 text-sm font-medium">
+            <span>Episode title</span>
             <Input autoComplete="off" maxLength={120} name="title" required />
           </label>
-          <label>
-            Story intent
+          <label className="grid gap-1.5 text-sm font-medium">
+            <span>Story intent</span>
             <Textarea
               autoComplete="off"
               maxLength={2000}
@@ -109,7 +114,7 @@ export function EpisodeCreateDialog({
             />
           </label>
           {error ? (
-            <p aria-live="polite" className="form-error">
+            <p aria-live="polite" className="text-sm text-destructive">
               {error}
             </p>
           ) : null}

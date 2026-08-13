@@ -76,29 +76,43 @@ export function LibrarySetup() {
   }
 
   if (series === undefined)
-    return <p className="loading-state">Loading studio…</p>;
+    return (
+      <p className="grid min-h-svh place-items-center text-sm text-muted-foreground">
+        Loading studio…
+      </p>
+    );
   const hasSeries = series.length > 0;
 
   return (
-    <main className="setup-shell" id="main-content">
-      <p className="eyebrow">Ottam production</p>
-      <h1>
+    <main
+      className="mx-auto grid min-h-svh w-full max-w-xl content-center gap-4 p-8"
+      id="main-content"
+    >
+      <p className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">
+        Ottam production
+      </p>
+      <h1 className="text-3xl font-semibold tracking-tight">
         {hasSeries ? "Create the first episode" : "Create the first series"}
       </h1>
-      <p className="setup-intro">
+      <p className="text-sm leading-6 text-muted-foreground">
         Library structure is deterministic in Convex. Transcript development
         begins in the episode chat after this one-time setup.
       </p>
       {hasSeries ? (
         <form
-          className="setup-form"
+          className="mt-2 grid gap-4"
           onSubmit={(event) => {
             void handleEpisode(event);
           }}
         >
-          <label>
-            Series
-            <select autoComplete="off" name="seriesId" required>
+          <label className="grid gap-1.5 text-sm font-medium">
+            <span>Series</span>
+            <select
+              autoComplete="off"
+              className="h-8 rounded-lg border border-input bg-input/30 px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+              name="seriesId"
+              required
+            >
               {series.map((item) => (
                 <option key={item.id} value={item.id}>
                   {item.title}
@@ -106,8 +120,8 @@ export function LibrarySetup() {
               ))}
             </select>
           </label>
-          <label>
-            Episode title
+          <label className="grid gap-1.5 text-sm font-medium">
+            <span>Episode title</span>
             <Input
               autoComplete="off"
               name="title"
@@ -116,8 +130,8 @@ export function LibrarySetup() {
               placeholder="For example, Someone Is Listening…"
             />
           </label>
-          <label>
-            Story intent
+          <label className="grid gap-1.5 text-sm font-medium">
+            <span>Story intent</span>
             <Textarea
               autoComplete="off"
               name="synopsis"
@@ -132,13 +146,13 @@ export function LibrarySetup() {
         </form>
       ) : (
         <form
-          className="setup-form"
+          className="mt-2 grid gap-4"
           onSubmit={(event) => {
             void handleSeries(event);
           }}
         >
-          <label>
-            Series title
+          <label className="grid gap-1.5 text-sm font-medium">
+            <span>Series title</span>
             <Input
               autoComplete="off"
               name="title"
@@ -147,8 +161,8 @@ export function LibrarySetup() {
               placeholder="For example, The Signal…"
             />
           </label>
-          <label>
-            Genre
+          <label className="grid gap-1.5 text-sm font-medium">
+            <span>Genre</span>
             <Input
               autoComplete="off"
               name="genre"
@@ -157,8 +171,8 @@ export function LibrarySetup() {
               placeholder="For example, sci-fi thriller…"
             />
           </label>
-          <label>
-            Series premise
+          <label className="grid gap-1.5 text-sm font-medium">
+            <span>Series premise</span>
             <Textarea
               autoComplete="off"
               name="description"
@@ -173,7 +187,7 @@ export function LibrarySetup() {
         </form>
       )}
       {error ? (
-        <p aria-live="polite" className="form-error">
+        <p aria-live="polite" className="text-sm text-destructive">
           {error}
         </p>
       ) : null}

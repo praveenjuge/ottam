@@ -7,24 +7,24 @@ export function AudioAssignmentDiff({
 }) {
   return (
     <section
-      className="audio-proposal"
+      className="grid gap-3 rounded-lg border bg-card p-4"
       aria-label="Audio assignment change set"
     >
-      <div className="audio-cost">
-        <span>Scene slot</span>
+      <div className="flex items-baseline justify-between gap-4">
+        <span className="text-xs text-muted-foreground">Scene slot</span>
         <strong>{assignment.variant}</strong>
       </div>
-      <dl>
-        <div>
-          <dt>Before</dt>
+      <dl className="grid grid-cols-2 gap-3">
+        <div className="grid gap-1">
+          <dt className="text-xs text-muted-foreground">Before</dt>
           <dd>{assignment.beforeAssetId ?? "Unassigned"}</dd>
         </div>
-        <div>
-          <dt>After</dt>
+        <div className="grid gap-1">
+          <dt className="text-xs text-muted-foreground">After</dt>
           <dd>{assignment.assetId}</dd>
         </div>
       </dl>
-      <p>
+      <p className="text-sm text-muted-foreground">
         This candidate becomes the approved release audio for the selected scene
         slot. The prior object remains immutable.
       </p>

@@ -6,7 +6,7 @@ export default async function HomePage() {
   const { userId } = await auth();
   if (!userId) {
     return (
-      <main className="sign-in-shell" id="main-content">
+      <main className="grid min-h-svh place-items-center p-8" id="main-content">
         <SignIn routing="hash" />
       </main>
     );

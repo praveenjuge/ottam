@@ -12,9 +12,15 @@ const convex = convexUrl ? new ConvexReactClient(convexUrl) : null;
 export function Providers({ children }: { children: ReactNode }) {
   if (!convex) {
     return (
-      <main className="configuration-error">
-        <h1>Studio configuration required</h1>
-        <p>NEXT_PUBLIC_CONVEX_URL is missing.</p>
+      <main className="grid min-h-svh place-items-center p-8">
+        <div className="space-y-2 text-center">
+          <h1 className="text-xl font-semibold">
+            Studio configuration required
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            NEXT_PUBLIC_CONVEX_URL is missing.
+          </p>
+        </div>
       </main>
     );
   }

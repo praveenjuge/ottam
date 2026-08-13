@@ -4,7 +4,9 @@ import { useAction } from "convex/react";
 import { useState } from "react";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface Report {
   durationPlanCount: number;
@@ -52,26 +54,29 @@ export function ReleasePanel({ episodeId }: { episodeId: Id<"episodes"> }) {
   }
 
   return (
-    <section className="release-panel" aria-labelledby="release-heading">
-      <h2 id="release-heading">Release</h2>
-      <p>
+    <section className="grid gap-3" aria-labelledby="release-heading">
+      <h2 className="text-sm font-medium" id="release-heading">
+        Release
+      </h2>
+      <p className="text-xs leading-5 text-muted-foreground">
         Validate assigned audio and all 46 deterministic duration plans before
         the human-only publish action becomes available.
       </p>
       {report ? (
-        <div
+        <Alert
           aria-live="polite"
-          className="validation-result"
-          data-valid={report.valid}
+          variant={report.valid ? "default" : "destructive"}
         >
-          <strong>{report.valid ? "Ready" : "Not ready"}</strong>
-          <span>{report.durationPlanCount}/46 plans</span>
-          {report.issues.map((issue) => (
-            <small key={issue}>{issue}</small>
-          ))}
-        </div>
+          <AlertTitle>{report.valid ? "Ready" : "Not ready"}</AlertTitle>
+          <AlertDescription className="grid gap-1">
+            <span>{report.durationPlanCount}/46 plans</span>
+            {report.issues.map((issue) => (
+              <small key={issue}>{issue}</small>
+            ))}
+          </AlertDescription>
+        </Alert>
       ) : null}
-      <div className="release-actions">
+      <div className="grid gap-2">
         <Button
           disabled={working}
           onClick={() => void runValidation()}
@@ -79,9 +84,9 @@ export function ReleasePanel({ episodeId }: { episodeId: Id<"episodes"> }) {
         >
           Validate
         </Button>
-        <label className="publish-confirmation">
-          Type PUBLISH to confirm this immutable release
-          <input
+        <label className="grid gap-1.5 text-xs font-medium text-muted-foreground">
+          <span>Type PUBLISH to confirm this immutable release</span>
+          <Input
             autoCapitalize="characters"
             autoComplete="off"
             onChange={(event) => {
@@ -101,7 +106,7 @@ export function ReleasePanel({ episodeId }: { episodeId: Id<"episodes"> }) {
         </Button>
       </div>
       {message ? (
-        <p aria-live="polite" className="release-message">
+        <p aria-live="polite" className="text-xs text-muted-foreground">
           {message}
         </p>
       ) : null}

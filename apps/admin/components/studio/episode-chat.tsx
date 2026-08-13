@@ -12,6 +12,9 @@ import { useEffect, useMemo, useState } from "react";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { parseStoredProposal } from "@/convex/lib/studioPolicy";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
   Checkpoint,
   CheckpointIcon,
@@ -393,7 +396,10 @@ function ChatSurface({
   });
 
   return (
-    <section className="chat-column" aria-label="Episode production chat">
+    <section
+      className="grid min-h-0 grid-rows-[minmax(0,1fr)_auto_auto] px-5 pb-4"
+      aria-label="Episode production chat"
+    >
       <Conversation>
         <ConversationContent>
           {messages.length === 0 ? (
@@ -418,12 +424,12 @@ function ChatSurface({
         <ConversationScrollButton />
       </Conversation>
       {error ? (
-        <p aria-live="polite" className="chat-error">
+        <p aria-live="polite" className="py-2 text-sm text-destructive">
           {error.message}
         </p>
       ) : null}
       <PromptInput
-        className="studio-prompt"
+        className="mx-auto w-full max-w-3xl bg-card"
         onSubmit={({ text }) => {
           if (text.trim()) void sendMessage({ text: text.trim() });
         }}
@@ -436,7 +442,7 @@ function ChatSurface({
           />
         </PromptInputBody>
         <PromptInputFooter>
-          <span className="model-label">
+          <span className="self-center pl-2 text-xs text-muted-foreground">
             DeepSeek V4 Flash · episode scoped
           </span>
           <PromptInputSubmit
@@ -455,24 +461,30 @@ function Inspector({ workspace }: { workspace: Workspace }) {
   const validationReady =
     workspace.audioAssets.length > 0 && workspace.scenes.length > 0;
   return (
-    <aside aria-labelledby="inspector-heading" className="studio-inspector">
-      <h2 className="nav-label" id="inspector-heading">
+    <aside
+      aria-labelledby="inspector-heading"
+      className="grid content-start gap-5 overflow-y-auto border-l bg-sidebar p-5 max-[70rem]:hidden"
+    >
+      <h2
+        className="text-xs font-medium text-muted-foreground"
+        id="inspector-heading"
+      >
         Episode state
       </h2>
-      <dl className="episode-facts">
-        <div>
+      <dl className="grid gap-3 text-sm">
+        <div className="flex justify-between gap-4">
           <dt>Revision</dt>
           <dd>{workspace.revisions[0]?.revisionNumber ?? 0}</dd>
         </div>
-        <div>
+        <div className="flex justify-between gap-4">
           <dt>Scenes</dt>
           <dd>{workspace.scenes.length}</dd>
         </div>
-        <div>
+        <div className="flex justify-between gap-4">
           <dt>Audio</dt>
           <dd>{workspace.audioAssets.length}</dd>
         </div>
-        <div>
+        <div className="flex justify-between gap-4">
           <dt>Status</dt>
           <dd>{workspace.episode.status}</dd>
         </div>
@@ -486,31 +498,43 @@ function Inspector({ workspace }: { workspace: Workspace }) {
           15–60 min validation
         </CheckpointTrigger>
       </Checkpoint>
+      <Separator />
       <ReleasePanel episodeId={workspace.episode._id} />
-      <section className="proposal-list">
-        <h2>Recent proposals</h2>
+      <section className="grid gap-2">
+        <h2 className="text-sm font-medium">Recent proposals</h2>
         {workspace.changeSets.length === 0 ? (
-          <p>No proposals yet.</p>
+          <p className="text-sm text-muted-foreground">No proposals yet.</p>
         ) : (
           workspace.changeSets.slice(0, 8).map((changeSet) => (
-            <article className="proposal-row" key={changeSet._id}>
-              <span>{parseStoredProposal(changeSet.changeJson).summary}</span>
-              <small>{changeSet.status}</small>
+            <article
+              className="flex justify-between gap-3 rounded-md px-2 py-1.5 text-sm hover:bg-muted"
+              key={changeSet._id}
+            >
+              <span className="min-w-0 truncate">
+                {parseStoredProposal(changeSet.changeJson).summary}
+              </span>
+              <small className="text-muted-foreground">
+                {changeSet.status}
+              </small>
             </article>
           ))
         )}
       </section>
-      <section className="candidate-list">
-        <h2>Audio candidates</h2>
+      <section className="grid gap-3">
+        <h2 className="text-sm font-medium">Audio candidates</h2>
         {workspace.audioAssets.filter((asset) => asset.status === "candidate")
           .length === 0 ? (
-          <p>No generated candidates.</p>
+          <p className="text-sm text-muted-foreground">
+            No generated candidates.
+          </p>
         ) : (
           workspace.audioAssets
             .filter((asset) => asset.status === "candidate")
             .map((asset) => (
-              <article key={asset._id}>
-                <span>{asset.immutableKey.split("/").at(-1)}</span>
+              <article className="grid gap-2" key={asset._id}>
+                <span className="truncate text-xs text-muted-foreground">
+                  {asset.immutableKey.split("/").at(-1)}
+                </span>
                 <CandidateAudio
                   assetId={asset._id}
                   episodeId={workspace.episode._id}
@@ -531,18 +555,28 @@ export function EpisodeChat({ episodeId }: { episodeId: Id<"episodes"> }) {
     if (workspace && !workspace.chat) void ensureChat({ episodeId });
   }, [ensureChat, episodeId, workspace]);
 
-  if (!workspace) return <p className="loading-state">Loading episode…</p>;
+  if (!workspace)
+    return (
+      <p className="grid min-h-svh place-items-center text-sm text-muted-foreground">
+        Loading episode…
+      </p>
+    );
   return (
-    <section className="episode-workspace">
-      <header className="episode-header">
-        <div>
-          <p>
-            {workspace.series?.title ?? "Series"} · Episode{" "}
-            {String(workspace.episode.sequence).padStart(2, "0")}
-          </p>
-          <h1>{workspace.episode.title}</h1>
+    <section className="grid h-svh min-w-0 grid-cols-[minmax(28rem,1fr)_18rem] grid-rows-[auto_minmax(0,1fr)] max-[70rem]:grid-cols-1">
+      <header className="col-span-full flex min-h-19 items-center justify-between gap-4 border-b px-5 py-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <SidebarTrigger />
+          <div className="min-w-0">
+            <p className="truncate text-xs text-muted-foreground">
+              {workspace.series?.title ?? "Series"} · Episode{" "}
+              {String(workspace.episode.sequence).padStart(2, "0")}
+            </p>
+            <h1 className="truncate text-lg font-semibold tracking-tight">
+              {workspace.episode.title}
+            </h1>
+          </div>
         </div>
-        <span className="status-pill">{workspace.episode.status}</span>
+        <Badge variant="outline">{workspace.episode.status}</Badge>
       </header>
       {workspace.chat ? (
         <ChatSurface
@@ -551,7 +585,9 @@ export function EpisodeChat({ episodeId }: { episodeId: Id<"episodes"> }) {
           workspace={workspace}
         />
       ) : (
-        <p className="loading-state">Creating persistent chat…</p>
+        <p className="grid place-items-center text-sm text-muted-foreground">
+          Creating persistent chat…
+        </p>
       )}
       <Inspector workspace={workspace} />
     </section>

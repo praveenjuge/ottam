@@ -23,8 +23,11 @@ export default function RootLayout({
 }: Readonly<{ children: ReactNode }>) {
   return (
     <html className={cn("dark font-sans", geist.variable)} lang="en">
-      <body>
-        <a className="skip-link" href="#main-content">
+      <body className="min-w-80 overflow-x-hidden bg-background text-foreground antialiased">
+        <a
+          className="fixed top-3 left-3 z-100 -translate-y-24 rounded-lg bg-primary px-3 py-2 text-primary-foreground focus-visible:translate-y-0"
+          href="#main-content"
+        >
           Skip to main content
         </a>
         <ClerkProvider afterSignOutUrl="/" dynamic>
