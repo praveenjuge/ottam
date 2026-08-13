@@ -1,0 +1,4 @@
+.next/
+.turbo/
+.env.local
+coverage/

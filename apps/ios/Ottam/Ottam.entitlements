@@ -4,7 +4,7 @@
 <dict>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>webcredentials:known-caiman-38.clerk.accounts.dev</string>
+		<string>webcredentials:$(OTTAM_CLERK_DOMAIN)</string>
 	</array>
 </dict>
 </plist>

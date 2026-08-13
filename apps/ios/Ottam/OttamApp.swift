@@ -9,7 +9,7 @@ struct OttamApp: App {
   @State private var services: AppServices
 
   init() {
-    Clerk.configure(publishableKey: "pk_test_a25vd24tY2FpbWFuLTM4LmNsZXJrLmFjY291bnRzLmRldiQ")
+    Clerk.configure(publishableKey: AppConfiguration.clerkPublishableKey)
     _services = State(initialValue: AppServices())
   }
 

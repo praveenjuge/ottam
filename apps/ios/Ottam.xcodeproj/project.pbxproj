@@ -57,6 +57,7 @@
 		07E9126727DD8B4D2DBDFAA7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		189D4893A5701477E8D53E34 /* PlaybackTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackTimeline.swift; sourceTree = "<group>"; };
 		21BD70B91342D8FED3252F12 /* CatalogStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogStore.swift; sourceTree = "<group>"; };
+		2A0B8C809F23D973819E4C91 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		2CD4C8D0477799E32002E67E /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		3ADEEDB8E4E46A985F5DE82E /* Ottam.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Ottam.entitlements; sourceTree = "<group>"; };
 		40A47E843FF3E0133B95FC71 /* OttamApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OttamApp.swift; sourceTree = "<group>"; };
@@ -112,6 +113,7 @@
 				07E9126727DD8B4D2DBDFAA7 /* AppDelegate.swift */,
 				FBEB1CCE04EBD4AEACDEADFB /* AppIcon.icon */,
 				0342015E9DDC6D6D20562BE1 /* AppServices.swift */,
+				2A0B8C809F23D973819E4C91 /* Info.plist */,
 				3ADEEDB8E4E46A985F5DE82E /* Ottam.entitlements */,
 				40A47E843FF3E0133B95FC71 /* OttamApp.swift */,
 				17C499E6D24EC567D695797A /* Models */,
@@ -255,7 +257,14 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
+					DAF199310DAD181275D7BDEF = {
+						DevelopmentTeam = LW385M78LW;
+					};
+					EB525812FA796A4FAF8E7E0B = {
+						DevelopmentTeam = LW385M78LW;
+					};
 					FD86B1DB363B388983744501 = {
+						DevelopmentTeam = LW385M78LW;
 						TestTargetID = DAF199310DAD181275D7BDEF;
 					};
 				};
@@ -439,6 +448,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = LW385M78LW;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -467,20 +477,21 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Ottam/Ottam.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				INFOPLIST_KEY_CFBundleDisplayName = Ottam;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
-				INFOPLIST_KEY_NSMotionUsageDescription = "Ottam uses motion to pause stories when you stop and select supportive walking or running scene variants.";
-				INFOPLIST_KEY_UIBackgroundModes = (
-					audio,
-					fetch,
-				);
+				CODE_SIGN_IDENTITY = "Apple Distribution";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = Ottam/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
+				OTTAM_CLERK_DOMAIN = clerk.ottam.praveenjuge.com;
+				OTTAM_CLERK_PUBLISHABLE_KEY = pk_live_Y2xlcmsub3R0YW0ucHJhdmVlbmp1Z2UuY29tJA;
+				OTTAM_CONVEX_URL = "https://uncommon-jellyfish-660.convex.cloud";
 				PRODUCT_BUNDLE_IDENTIFIER = com.praveenjuge.ottam;
 				PRODUCT_NAME = Ottam;
+				PROVISIONING_PROFILE_SPECIFIER = "Ottam App Store Distribution";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -537,6 +548,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = LW385M78LW;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -573,17 +585,17 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Ottam/Ottam.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				INFOPLIST_KEY_CFBundleDisplayName = Ottam;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
-				INFOPLIST_KEY_NSMotionUsageDescription = "Ottam uses motion to pause stories when you stop and select supportive walking or running scene variants.";
-				INFOPLIST_KEY_UIBackgroundModes = (
-					audio,
-					fetch,
-				);
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = Ottam/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
+				OTTAM_CLERK_DOMAIN = "known-caiman-38.clerk.accounts.dev";
+				OTTAM_CLERK_PUBLISHABLE_KEY = pk_test_a25vd24tY2FpbWFuLTM4LmNsZXJrLmFjY291bnRzLmRldiQ;
+				OTTAM_CONVEX_URL = "https://wary-caribou-993.eu-west-1.convex.cloud";
 				PRODUCT_BUNDLE_IDENTIFIER = com.praveenjuge.ottam;
 				PRODUCT_NAME = Ottam;
 				SDKROOT = iphoneos;

@@ -1,0 +1,132 @@
+name: TestFlight
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - package.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: testflight-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Archive and upload
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Resolve release version
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          current="$(jq -r '.version' package.json)"
+          previous="$(git show HEAD^:package.json 2>/dev/null | jq -r '.version // empty' || true)"
+          if [[ "${{ github.event_name }}" != "workflow_dispatch" && "$current" == "$previous" ]]; then
+            printf 'release=false\n' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [[ ! "$current" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Root package version must be SemVer (x.y.z), received: $current" >&2
+            exit 1
+          fi
+          {
+            echo "release=true"
+            echo "marketing=$current"
+            echo "build=${GITHUB_RUN_NUMBER}"
+          } >> "$GITHUB_OUTPUT"
+
+      - uses: oven-sh/setup-bun@v2
+        if: steps.version.outputs.release == 'true'
+        with:
+          bun-version-file: package.json
+
+      - name: Install build tools
+        if: steps.version.outputs.release == 'true'
+        run: brew install xcodegen
+
+      - name: Install signing assets
+        if: steps.version.outputs.release == 'true'
+        env:
+          APPLE_CERTIFICATE_P12_B64: ${{ secrets.APPLE_CERTIFICATE_P12_B64 }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_PROVISIONING_PROFILE_B64: ${{ secrets.APPLE_PROVISIONING_PROFILE_B64 }}
+          KEYCHAIN_PASSWORD: ${{ secrets.APPLE_KEYCHAIN_PASSWORD }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          certificate="$RUNNER_TEMP/ottam-distribution.p12"
+          profile="$RUNNER_TEMP/ottam.mobileprovision"
+          keychain="$RUNNER_TEMP/ottam-signing.keychain-db"
+          printf '%s' "$APPLE_CERTIFICATE_P12_B64" | base64 --decode > "$certificate"
+          printf '%s' "$APPLE_PROVISIONING_PROFILE_B64" | base64 --decode > "$profile"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$keychain"
+          security set-keychain-settings -lut 21600 "$keychain"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$keychain"
+          security import "$certificate" -P "$APPLE_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$keychain"
+          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" "$keychain"
+          security list-keychain -d user -s "$keychain" login.keychain-db
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          uuid="$(security cms -D -i "$profile" | plutil -extract UUID raw -)"
+          cp "$profile" "$HOME/Library/MobileDevice/Provisioning Profiles/$uuid.mobileprovision"
+
+      - name: Archive and export IPA
+        if: steps.version.outputs.release == 'true'
+        working-directory: apps/ios
+        env:
+          MARKETING_VERSION: ${{ steps.version.outputs.marketing }}
+          BUILD_NUMBER: ${{ steps.version.outputs.build }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcodegen generate
+          xcodebuild \
+            -project Ottam.xcodeproj \
+            -scheme Ottam \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/Ottam.xcarchive" \
+            MARKETING_VERSION="$MARKETING_VERSION" \
+            CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+            archive
+          xcodebuild \
+            -exportArchive \
+            -archivePath "$RUNNER_TEMP/Ottam.xcarchive" \
+            -exportPath "$RUNNER_TEMP/OttamExport" \
+            -exportOptionsPlist ExportOptions.plist
+
+      - uses: rudrankriyam/setup-asc@v1
+        if: steps.version.outputs.release == 'true'
+        with:
+          version: latest
+
+      - name: Upload to TestFlight
+        if: steps.version.outputs.release == 'true'
+        env:
+          ASC_APP_ID: "6800990054"
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_PRIVATE_KEY_B64: ${{ secrets.ASC_PRIVATE_KEY_B64 }}
+          ASC_UPLOAD_TIMEOUT: 10m
+        run: |
+          asc builds upload \
+            --app "$ASC_APP_ID" \
+            --ipa "$RUNNER_TEMP/OttamExport/Ottam.ipa"
+
+      - name: Release summary
+        if: steps.version.outputs.release == 'true'
+        run: |
+          {
+            echo "### TestFlight upload"
+            echo "Version ${{ steps.version.outputs.marketing }} (${{ steps.version.outputs.build }}) was uploaded."
+            echo "This workflow never submits an App Store review."
+          } >> "$GITHUB_STEP_SUMMARY"
