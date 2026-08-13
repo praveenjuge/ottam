@@ -18,7 +18,7 @@ import {
   type ProductionMessage,
   type ProductionTools,
 } from "@/lib/production-agent";
-import { getStudioModelId } from "@/lib/studio-model";
+import { getStudioModelLabel } from "@/lib/studio-model";
 
 export const maxDuration = 300;
 const maximumRequestBytes = 256_000;
@@ -107,7 +107,7 @@ export async function POST(request: Request): Promise<Response> {
     const persisted = parseStoredMessages(workspace.messages);
     const messages = mergeIncomingMessage(persisted, incoming);
     const runId = `run_${nanoid(20)}`;
-    const model = getStudioModelId();
+    const model = getStudioModelLabel();
     const agentRunId = await client.action(api.studioActions.beginAgentRun, {
       ...(workspace.episode.currentRevisionId
         ? { baseRevisionId: workspace.episode.currentRevisionId }
