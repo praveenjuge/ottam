@@ -47,6 +47,7 @@ export const listEpisodes = query({
     v.object({
       episodeId: v.id("episodes"),
       sequence: v.number(),
+      seriesId: v.id("series"),
       seriesTitle: v.string(),
       status: v.string(),
       title: v.string(),
@@ -54,13 +55,14 @@ export const listEpisodes = query({
   ),
   handler: async (ctx) => {
     await requireAdmin(ctx);
-    const episodes = await ctx.db.query("episodes").collect();
+    const episodes = await ctx.db.query("episodes").take(500);
     const rows = await Promise.all(
       episodes.map(async (episode) => {
         const series = await ctx.db.get(episode.seriesId);
         return {
           episodeId: episode._id,
           sequence: episode.sequence,
+          seriesId: episode.seriesId,
           seriesTitle: series?.title ?? "Unknown series",
           status: episode.status,
           title: episode.title,

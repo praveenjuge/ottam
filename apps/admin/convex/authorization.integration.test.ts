@@ -57,6 +57,38 @@ describe("Convex authorization", () => {
     ).rejects.toThrow("Administrator access is required");
   });
 
+  test("allocates episode sequences transactionally", async () => {
+    vi.stubEnv("OTTAM_ADMIN_EMAIL", adminIdentity.email);
+    vi.stubEnv("OTTAM_ADMIN_CLERK_USER_ID", adminIdentity.subject);
+    const t = convexTest(schema, modules).withIdentity(adminIdentity);
+    const seriesId = await t.mutation(api.series.createDraft, {
+      description: "A transmission follows the listener through the city.",
+      genre: "Sci-fi thriller",
+      slug: "the-signal",
+      title: "The Signal",
+    });
+
+    await t.action(api.studioActions.createDraftEpisode, {
+      idempotencyKey: "episode_first_1234",
+      seriesId,
+      slug: "the-first-transmission",
+      synopsis: "A receiver wakes up when the listener begins moving.",
+      title: "The First Transmission",
+    });
+    await t.action(api.studioActions.createDraftEpisode, {
+      idempotencyKey: "episode_second_123",
+      seriesId,
+      slug: "someone-is-listening",
+      synopsis: "The voice on the channel begins answering back.",
+      title: "Someone Is Listening",
+    });
+
+    await expect(t.query(api.studio.listEpisodes)).resolves.toMatchObject([
+      { sequence: 1, title: "The First Transmission" },
+      { sequence: 2, title: "Someone Is Listening" },
+    ]);
+  });
+
   test("refuses an unauthenticated caller", async () => {
     vi.stubEnv("OTTAM_ADMIN_EMAIL", adminIdentity.email);
     vi.stubEnv("OTTAM_ADMIN_CLERK_USER_ID", adminIdentity.subject);

@@ -17,7 +17,7 @@ export const listPublished = query({
     const rows = await ctx.db
       .query("series")
       .withIndex("by_status", (index) => index.eq("status", "published"))
-      .collect();
+      .take(200);
     return rows.map((row) => ({
       description: row.description,
       genre: row.genre,
@@ -42,7 +42,7 @@ export const listAdmin = query({
   ),
   handler: async (ctx) => {
     await requireAdmin(ctx);
-    const rows = await ctx.db.query("series").collect();
+    const rows = await ctx.db.query("series").take(200);
     return rows
       .map((row) => ({
         description: row.description,

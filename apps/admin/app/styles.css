@@ -204,6 +204,20 @@ p {
   text-transform: uppercase;
 }
 
+.episode-nav-header {
+  display: grid;
+  gap: 0.65rem;
+  margin-bottom: 0.35rem;
+}
+
+.episode-create-trigger {
+  width: 100%;
+}
+
+.episode-create-dialog {
+  max-width: 32rem;
+}
+
 .episode-nav-item {
   display: grid;
   grid-template-columns: 1.6rem 1fr;

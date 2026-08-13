@@ -26,7 +26,7 @@ function hash(value: unknown): string {
 export const createDraftEpisode = action({
   args: {
     idempotencyKey: v.string(),
-    sequence: v.number(),
+    sequence: v.optional(v.number()),
     seriesId: v.id("series"),
     slug: v.string(),
     synopsis: v.string(),

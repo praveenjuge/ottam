@@ -10,6 +10,7 @@ import {
 import { useEffect, useState } from "react";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { EpisodeCreateDialog } from "./episode-create-dialog";
 import { EpisodeChat } from "./episode-chat";
 import { LibrarySetup } from "./library-setup";
 
@@ -63,7 +64,10 @@ function AuthenticatedStudio() {
           <UserButton />
         </header>
         <nav aria-label="Episodes" className="episode-nav">
-          <p className="nav-label">Episodes</p>
+          <header className="episode-nav-header">
+            <p className="nav-label">Episodes</p>
+            <EpisodeCreateDialog onCreated={setSelectedId} />
+          </header>
           {episodes.map((episode) => (
             <button
               aria-current={

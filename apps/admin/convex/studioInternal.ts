@@ -107,7 +107,7 @@ export const createDraftEpisode = internalMutation({
   args: {
     ...actorArgs,
     idempotencyKey: v.string(),
-    sequence: v.number(),
+    sequence: v.optional(v.number()),
     seriesId: v.id("series"),
     slug: v.string(),
     synopsis: v.string(),
@@ -124,6 +124,32 @@ export const createDraftEpisode = internalMutation({
       throw new ConvexError({
         code: "NOT_FOUND",
         message: "Series not found.",
+      });
+    }
+    const latestEpisode = await ctx.db
+      .query("episodes")
+      .withIndex("by_series_and_sequence", (queryBuilder) =>
+        queryBuilder.eq("seriesId", args.seriesId),
+      )
+      .order("desc")
+      .first();
+    const sequence = args.sequence ?? (latestEpisode?.sequence ?? 0) + 1;
+    if (!Number.isSafeInteger(sequence) || sequence < 1 || sequence > 10_000) {
+      throw new ConvexError({
+        code: "INVALID_ARGUMENT",
+        message: "Episode sequence is invalid.",
+      });
+    }
+    const sequenceConflict = await ctx.db
+      .query("episodes")
+      .withIndex("by_series_and_sequence", (queryBuilder) =>
+        queryBuilder.eq("seriesId", args.seriesId).eq("sequence", sequence),
+      )
+      .unique();
+    if (sequenceConflict && sequenceConflict.slug !== args.slug) {
+      throw new ConvexError({
+        code: "SEQUENCE_CONFLICT",
+        message: "That episode sequence is already in use.",
       });
     }
     const existing = await ctx.db
@@ -159,7 +185,7 @@ export const createDraftEpisode = internalMutation({
     const now = Date.now();
     const episodeId = await ctx.db.insert("episodes", {
       createdAt: now,
-      sequence: args.sequence,
+      sequence,
       seriesId: args.seriesId,
       slug: args.slug,
       status: "draft",
