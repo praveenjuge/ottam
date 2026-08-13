@@ -1,0 +1,9 @@
+title = "Ottam secret scanning"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Clerk publishable keys are intentionally public client identifiers"
+regexTarget = "secret"
+regexes = ['''pk_(?:test|live)_[A-Za-z0-9]+''']
