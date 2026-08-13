@@ -7,6 +7,7 @@ import {
   Unauthenticated,
   useQuery,
 } from "convex/react";
+import { LibraryBig } from "lucide-react";
 import { useEffect, useState } from "react";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
@@ -27,7 +28,7 @@ import {
 } from "@/components/ui/sidebar";
 import { EpisodeCreateDialog } from "./episode-create-dialog";
 import { EpisodeChat } from "./episode-chat";
-import { LibrarySetup } from "./library-setup";
+import { SeriesLibrary } from "./series-library";
 
 export function StudioApp() {
   return (
@@ -66,19 +67,21 @@ function SigningOut() {
 
 function AuthenticatedStudio() {
   const episodes = useQuery(api.studio.listEpisodes);
+  const series = useQuery(api.series.listAdmin);
   const [selectedId, setSelectedId] = useState<Id<"episodes">>();
+  const [view, setView] = useState<"episode" | "library">("library");
 
-  useEffect(() => {
-    if (!selectedId && episodes?.[0]) setSelectedId(episodes[0].episodeId);
-  }, [episodes, selectedId]);
+  function openEpisode(episodeId: Id<"episodes">) {
+    setSelectedId(episodeId);
+    setView("episode");
+  }
 
-  if (episodes === undefined)
+  if (episodes === undefined || series === undefined)
     return (
       <p className="grid min-h-svh place-items-center text-sm text-muted-foreground">
         Loading studio…
       </p>
     );
-  if (episodes.length === 0) return <LibrarySetup />;
 
   return (
     <SidebarProvider>
@@ -93,11 +96,31 @@ function AuthenticatedStudio() {
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
+            <SidebarGroupLabel>Library</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={view === "library"}
+                    onClick={() => {
+                      setView("library");
+                    }}
+                  >
+                    <LibraryBig />
+                    Series
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+          <SidebarGroup>
             <div className="mb-2 flex items-center justify-between gap-2 px-2">
               <SidebarGroupLabel className="h-auto p-0">
                 Episodes
               </SidebarGroupLabel>
-              <EpisodeCreateDialog onCreated={setSelectedId} />
+              {series.length > 0 ? (
+                <EpisodeCreateDialog compact onCreated={openEpisode} />
+              ) : null}
             </div>
             <SidebarGroupContent>
               <SidebarMenu aria-label="Episodes">
@@ -107,7 +130,7 @@ function AuthenticatedStudio() {
                       className="h-auto items-start py-2"
                       isActive={selectedId === episode.episodeId}
                       onClick={() => {
-                        setSelectedId(episode.episodeId);
+                        openEpisode(episode.episodeId);
                       }}
                     >
                       <span className="w-5 shrink-0 pt-0.5 text-xs tabular-nums text-muted-foreground">
@@ -136,10 +159,16 @@ function AuthenticatedStudio() {
         </SidebarFooter>
         <SidebarRail />
       </Sidebar>
-      <SidebarInset id="main-content">
-        {selectedId ? (
+      <SidebarInset>
+        {view === "episode" && selectedId ? (
           <EpisodeChat episodeId={selectedId} key={selectedId} />
-        ) : null}
+        ) : (
+          <SeriesLibrary
+            episodes={episodes}
+            onOpenEpisode={openEpisode}
+            series={series}
+          />
+        )}
       </SidebarInset>
     </SidebarProvider>
   );

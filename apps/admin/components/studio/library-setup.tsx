@@ -8,14 +8,7 @@ import type { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-
-function slugify(value: string): string {
-  return value
-    .trim()
-    .toLocaleLowerCase("en-US")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
+import { formText, slugify } from "./studio-form";
 
 export function LibrarySetup() {
   const series = useQuery(api.series.listAdmin);
@@ -23,11 +16,6 @@ export function LibrarySetup() {
   const createEpisode = useAction(api.studioActions.createDraftEpisode);
   const [error, setError] = useState<string>();
   const [working, setWorking] = useState(false);
-
-  function formText(data: FormData, name: string): string {
-    const value = data.get(name);
-    return typeof value === "string" ? value.trim() : "";
-  }
 
   async function handleSeries(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault();

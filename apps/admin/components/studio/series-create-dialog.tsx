@@ -1,11 +1,9 @@
 "use client";
 
-import { useAction, useQuery } from "convex/react";
+import { useMutation } from "convex/react";
 import { Plus } from "lucide-react";
-import { nanoid } from "nanoid";
 import { useState, type SyntheticEvent } from "react";
 import { api } from "@/convex/_generated/api";
-import type { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,48 +15,32 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { formText, slugify } from "./studio-form";
 
-export function EpisodeCreateDialog({
-  compact = false,
-  onCreated,
-}: {
-  compact?: boolean;
-  onCreated: (episodeId: Id<"episodes">) => void;
-}) {
-  const series = useQuery(api.series.listAdmin);
-  const createEpisode = useAction(api.studioActions.createDraftEpisode);
+export function SeriesCreateDialog() {
+  const createSeries = useMutation(api.series.createDraft);
   const [error, setError] = useState<string>();
   const [open, setOpen] = useState(false);
   const [working, setWorking] = useState(false);
+
   async function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const seriesId = formText(data, "seriesId") as Id<"series">;
     const title = formText(data, "title");
     setWorking(true);
     setError(undefined);
     try {
-      const result = await createEpisode({
-        idempotencyKey: `episode_${nanoid(18)}`,
-        seriesId,
+      await createSeries({
+        description: formText(data, "description"),
+        genre: formText(data, "genre"),
         slug: slugify(title),
-        synopsis: formText(data, "synopsis"),
         title,
       });
       setOpen(false);
-      onCreated(result.episodeId);
     } catch (caught) {
       setError(
-        caught instanceof Error ? caught.message : "Could not create episode.",
+        caught instanceof Error ? caught.message : "Could not create series.",
       );
     } finally {
       setWorking(false);
@@ -68,20 +50,17 @@ export function EpisodeCreateDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          size={compact ? "xs" : "default"}
-          variant={compact ? "ghost" : "outline"}
-        >
-          {compact ? null : <Plus />}
-          {compact ? "Add" : "New episode"}
+        <Button>
+          <Plus />
+          New series
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Create an episode</DialogTitle>
+          <DialogTitle>Create a series</DialogTitle>
           <DialogDescription>
-            Create the production workspace now. Develop its transcript later in
-            the episode-scoped chat.
+            Define the editorial container. Episode transcripts are developed
+            later in their persistent production chats.
           </DialogDescription>
         </DialogHeader>
         <form
@@ -89,30 +68,32 @@ export function EpisodeCreateDialog({
           onSubmit={(event) => void handleSubmit(event)}
         >
           <Label className="grid gap-1.5">
-            Series
-            <Select name="seriesId" required>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Choose a series" />
-              </SelectTrigger>
-              <SelectContent>
-                {series?.map((item) => (
-                  <SelectItem key={item.id} value={item.id}>
-                    {item.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            Series title
+            <Input
+              autoComplete="off"
+              maxLength={120}
+              name="title"
+              placeholder="The Signal"
+              required
+            />
           </Label>
           <Label className="grid gap-1.5">
-            Episode title
-            <Input autoComplete="off" maxLength={120} name="title" required />
+            Genre
+            <Input
+              autoComplete="off"
+              maxLength={80}
+              name="genre"
+              placeholder="Science-fiction thriller"
+              required
+            />
           </Label>
           <Label className="grid gap-1.5">
-            Story intent
+            Series premise
             <Textarea
               autoComplete="off"
               maxLength={2000}
-              name="synopsis"
+              name="description"
+              placeholder="What makes this world and its central mystery worth returning to?"
               required
             />
           </Label>
@@ -121,8 +102,8 @@ export function EpisodeCreateDialog({
               {error}
             </p>
           ) : null}
-          <Button disabled={working || !series?.length} type="submit">
-            {working ? "Creating…" : "Create episode"}
+          <Button disabled={working} type="submit">
+            {working ? "Creating…" : "Create series"}
           </Button>
         </form>
       </DialogContent>
