@@ -156,6 +156,7 @@ export async function POST(request: Request): Promise<Response> {
     return await createAgentUIStreamResponse({
       agent,
       consumeSseStream: consumeStream,
+      generateMessageId: () => `message_${nanoid(20)}`,
       onEnd: async ({ isAborted, responseMessage }) => {
         try {
           await client.action(api.studioActions.saveMessage, {
