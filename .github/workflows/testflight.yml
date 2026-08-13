@@ -69,11 +69,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          next="$(asc builds next-number \
-            --app-id "$ASC_APP_ID" \
-            --platform ios \
+          next="$(asc builds next-build-number \
+            --app "$ASC_APP_ID" \
+            --platform IOS \
             --version "${{ steps.version.outputs.marketing }}" \
-            --output json | jq -r '.data.nextBuildNumber')"
+            --output json | jq -r '.nextBuildNumber')"
           if [[ ! "$next" =~ ^[1-9][0-9]*$ ]]; then
             echo "App Store Connect returned an invalid build number: $next" >&2
             exit 1
