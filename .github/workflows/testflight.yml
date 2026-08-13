@@ -42,7 +42,6 @@ jobs:
           {
             echo "release=true"
             echo "marketing=$current"
-            echo "build=${GITHUB_RUN_NUMBER}"
           } >> "$GITHUB_OUTPUT"
 
       - uses: oven-sh/setup-bun@v2
@@ -53,6 +52,33 @@ jobs:
       - name: Install build tools
         if: steps.version.outputs.release == 'true'
         run: brew install xcodegen
+
+      - uses: rudrankriyam/setup-asc@v1
+        if: steps.version.outputs.release == 'true'
+        with:
+          version: latest
+
+      - name: Resolve next App Store build number
+        id: build
+        if: steps.version.outputs.release == 'true'
+        env:
+          ASC_APP_ID: "6800990054"
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_PRIVATE_KEY_B64: ${{ secrets.ASC_PRIVATE_KEY_B64 }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          next="$(asc builds next-number \
+            --app-id "$ASC_APP_ID" \
+            --platform ios \
+            --version "${{ steps.version.outputs.marketing }}" \
+            --output json | jq -r '.data.nextBuildNumber')"
+          if [[ ! "$next" =~ ^[1-9][0-9]*$ ]]; then
+            echo "App Store Connect returned an invalid build number: $next" >&2
+            exit 1
+          fi
+          echo "number=$next" >> "$GITHUB_OUTPUT"
 
       - name: Install signing assets
         if: steps.version.outputs.release == 'true'
@@ -84,7 +110,7 @@ jobs:
         working-directory: apps/ios
         env:
           MARKETING_VERSION: ${{ steps.version.outputs.marketing }}
-          BUILD_NUMBER: ${{ steps.version.outputs.build }}
+          BUILD_NUMBER: ${{ steps.build.outputs.number }}
         shell: bash
         run: |
           set -euo pipefail
@@ -104,11 +130,6 @@ jobs:
             -exportPath "$RUNNER_TEMP/OttamExport" \
             -exportOptionsPlist ExportOptions.plist
 
-      - uses: rudrankriyam/setup-asc@v1
-        if: steps.version.outputs.release == 'true'
-        with:
-          version: latest
-
       - name: Upload to TestFlight
         if: steps.version.outputs.release == 'true'
         env:
@@ -127,6 +148,6 @@ jobs:
         run: |
           {
             echo "### TestFlight upload"
-            echo "Version ${{ steps.version.outputs.marketing }} (${{ steps.version.outputs.build }}) was uploaded."
+            echo "Version ${{ steps.version.outputs.marketing }} (${{ steps.build.outputs.number }}) was uploaded."
             echo "This workflow never submits an App Store review."
           } >> "$GITHUB_STEP_SUMMARY"
