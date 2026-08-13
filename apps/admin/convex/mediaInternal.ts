@@ -58,7 +58,7 @@ async function assignedAsset(ctx: MutationCtx, assignment: AudioAssignment) {
     .withIndex("by_scene", (queryBuilder) =>
       queryBuilder.eq("sceneId", assignment.sceneId as Id<"scenes">),
     )
-    .collect();
+    .take(10);
   const variant = storedVariant(assignment);
   return assets.find(
     (asset) => asset.status === "approved" && asset.variant === variant,
@@ -521,7 +521,13 @@ export const claimGenerationJob = internalMutation({
       .withIndex("by_credit_date", (queryBuilder) =>
         queryBuilder.eq("dailyCreditDate", args.dailyCreditDate),
       )
-      .collect();
+      .take(1_001);
+    if (today.length > 1_000) {
+      throw new ConvexError({
+        code: "DAILY_CEILING",
+        message: "Daily generation job accounting exceeded its safe limit.",
+      });
+    }
     const reservedCredits = today.reduce(
       (total, job) => total + job.estimatedCredits,
       0,

@@ -105,14 +105,14 @@ export const workspace = query({
         .withIndex("by_episode_and_order", (queryBuilder) =>
           queryBuilder.eq("episodeId", args.episodeId),
         )
-        .collect(),
+        .take(250),
       ctx.db
         .query("audioAssets")
         .withIndex("by_episode_and_status", (queryBuilder) =>
           queryBuilder.eq("episodeId", args.episodeId),
         )
-        .collect(),
-      ctx.db.query("voices").collect(),
+        .take(750),
+      ctx.db.query("voices").take(250),
       ctx.db
         .query("productionChats")
         .withIndex("by_episode", (queryBuilder) =>
@@ -147,7 +147,9 @@ export const workspace = query({
           .withIndex("by_chat_and_sequence", (queryBuilder) =>
             queryBuilder.eq("chatId", chat._id),
           )
-          .collect()
+          .order("desc")
+          .take(200)
+          .then((rows) => rows.reverse())
       : [];
     return {
       audioAssets,
@@ -219,7 +221,7 @@ export const storyContext = query({
       .withIndex("by_series_and_sequence", (queryBuilder) =>
         queryBuilder.eq("seriesId", series._id),
       )
-      .collect();
+      .take(100);
     const episodeContexts = await Promise.all(
       episodes.map(async (episode) => {
         const scenes = await ctx.db
@@ -227,7 +229,7 @@ export const storyContext = query({
           .withIndex("by_episode_and_order", (queryBuilder) =>
             queryBuilder.eq("episodeId", episode._id),
           )
-          .collect();
+          .take(250);
         const revision = episode.currentRevisionId
           ? await ctx.db.get(episode.currentRevisionId)
           : null;

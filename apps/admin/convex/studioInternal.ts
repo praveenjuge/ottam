@@ -11,6 +11,16 @@ import {
 } from "./lib/studioPolicy";
 
 const actorArgs = { actorSubject: v.string() };
+const maximumScenesPerEpisode = 250;
+
+function assertSupportedSceneCount(scenes: Doc<"scenes">[]): void {
+  if (scenes.length > maximumScenesPerEpisode) {
+    throw new ConvexError({
+      code: "CONTENT_LIMIT",
+      message: "Episodes support at most 250 scenes.",
+    });
+  }
+}
 
 function contentHash(value: unknown): string {
   return bytesToHex(sha256(new TextEncoder().encode(stableJson(value))));
@@ -75,7 +85,8 @@ async function snapshotEpisode(ctx: MutationCtx, episodeId: Id<"episodes">) {
     .withIndex("by_episode_and_order", (queryBuilder) =>
       queryBuilder.eq("episodeId", episodeId),
     )
-    .collect();
+    .take(maximumScenesPerEpisode + 1);
+  assertSupportedSceneCount(scenes);
   return {
     contractVersion: 1,
     episode: editableEpisode(episode),
@@ -515,10 +526,22 @@ export const applyChangeSet = internalMutation({
       .withIndex("by_episode_and_order", (queryBuilder) =>
         queryBuilder.eq("episodeId", changeSet.episodeId),
       )
-      .collect();
+      .take(maximumScenesPerEpisode + 1);
+    assertSupportedSceneCount(scenes);
     const scenesByKey = new Map(
       scenes.map((scene) => [scene.stableKey, scene]),
     );
+    const addedSceneCount = proposal.operations.filter(
+      (operation) =>
+        operation.entity === "scene" &&
+        !scenesByKey.has(operation.after.stableKey),
+    ).length;
+    if (scenes.length + addedSceneCount > maximumScenesPerEpisode) {
+      throw new ConvexError({
+        code: "CONTENT_LIMIT",
+        message: "Episodes support at most 250 scenes.",
+      });
+    }
     if (!proposalBeforeMatches(proposal, episode, scenesByKey)) {
       await ctx.db.patch(changeSet._id, { status: "stale" });
       throw new ConvexError({

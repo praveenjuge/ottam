@@ -89,6 +89,7 @@ export function ReleasePanel({ episodeId }: { episodeId: Id<"episodes"> }) {
           <Input
             autoCapitalize="characters"
             autoComplete="off"
+            name="publish-confirmation"
             onChange={(event) => {
               setPublishConfirmation(event.target.value);
             }}

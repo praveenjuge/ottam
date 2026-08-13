@@ -438,6 +438,7 @@ function ChatSurface({
           <PromptInputTextarea
             aria-label="Episode production request"
             autoComplete="off"
+            name="request"
             placeholder="Develop the transcript, check continuity, or preview a duration…"
           />
         </PromptInputBody>
@@ -557,12 +558,18 @@ export function EpisodeChat({ episodeId }: { episodeId: Id<"episodes"> }) {
 
   if (!workspace)
     return (
-      <p className="grid min-h-svh place-items-center text-sm text-muted-foreground">
+      <main
+        className="grid min-h-svh place-items-center text-sm text-muted-foreground"
+        id="main-content"
+      >
         Loading episode…
-      </p>
+      </main>
     );
   return (
-    <section className="grid h-svh min-w-0 grid-cols-[minmax(28rem,1fr)_18rem] grid-rows-[auto_minmax(0,1fr)] max-[70rem]:grid-cols-1">
+    <main
+      className="grid h-svh min-w-0 grid-cols-[minmax(28rem,1fr)_18rem] grid-rows-[auto_minmax(0,1fr)] max-[70rem]:grid-cols-1"
+      id="main-content"
+    >
       <header className="col-span-full flex min-h-19 items-center justify-between gap-4 border-b px-5 py-3">
         <div className="flex min-w-0 items-center gap-3">
           <SidebarTrigger />
@@ -590,6 +597,6 @@ export function EpisodeChat({ episodeId }: { episodeId: Id<"episodes"> }) {
         </p>
       )}
       <Inspector workspace={workspace} />
-    </section>
+    </main>
   );
 }

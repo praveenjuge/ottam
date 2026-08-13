@@ -337,7 +337,8 @@ export const myState = query({
         .withIndex("by_listener_and_updated", (queryBuilder) =>
           queryBuilder.eq("listenerSubject", identity.tokenIdentifier),
         )
-        .collect(),
+        .order("desc")
+        .take(500),
       ctx.db
         .query("runSessions")
         .withIndex("by_listener_and_started", (queryBuilder) =>

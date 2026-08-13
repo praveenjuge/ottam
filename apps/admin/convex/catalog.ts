@@ -28,7 +28,7 @@ export const listPublished = query({
       .withIndex("by_status", (queryBuilder) =>
         queryBuilder.eq("status", "published"),
       )
-      .collect();
+      .take(200);
     return await Promise.all(
       seriesRows.map(async (series) => {
         const episodes = await ctx.db
@@ -36,7 +36,7 @@ export const listPublished = query({
           .withIndex("by_series_and_sequence", (queryBuilder) =>
             queryBuilder.eq("seriesId", series._id),
           )
-          .collect();
+          .take(200);
         return {
           description: series.description,
           episodes: episodes.flatMap((episode) =>

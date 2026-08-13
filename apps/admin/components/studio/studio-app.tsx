@@ -71,9 +71,37 @@ function AuthenticatedStudio() {
   const [selectedId, setSelectedId] = useState<Id<"episodes">>();
   const [view, setView] = useState<"episode" | "library">("library");
 
+  useEffect(() => {
+    function syncViewFromUrl() {
+      const episodeId = new URL(window.location.href).searchParams.get(
+        "episode",
+      );
+      const episode = episodes?.find((item) => item.episodeId === episodeId);
+      setSelectedId(episode?.episodeId);
+      setView(episode ? "episode" : "library");
+    }
+
+    syncViewFromUrl();
+    window.addEventListener("popstate", syncViewFromUrl);
+    return () => {
+      window.removeEventListener("popstate", syncViewFromUrl);
+    };
+  }, [episodes]);
+
   function openEpisode(episodeId: Id<"episodes">) {
     setSelectedId(episodeId);
     setView("episode");
+    const url = new URL(window.location.href);
+    url.searchParams.set("episode", episodeId);
+    window.history.pushState({}, "", url);
+  }
+
+  function openLibrary() {
+    setSelectedId(undefined);
+    setView("library");
+    const url = new URL(window.location.href);
+    url.searchParams.delete("episode");
+    window.history.pushState({}, "", url);
   }
 
   if (episodes === undefined || series === undefined)
@@ -102,9 +130,7 @@ function AuthenticatedStudio() {
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     isActive={view === "library"}
-                    onClick={() => {
-                      setView("library");
-                    }}
+                    onClick={openLibrary}
                   >
                     <LibraryBig />
                     Series
