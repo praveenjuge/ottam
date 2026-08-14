@@ -438,7 +438,6 @@ function ChatSurface({
           <PromptInputTextarea
             aria-label="Episode production request"
             autoComplete="off"
-            name="request"
             placeholder="Develop the transcript, check continuity, or preview a duration…"
           />
         </PromptInputBody>
