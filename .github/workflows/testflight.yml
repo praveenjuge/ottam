@@ -143,6 +143,43 @@ jobs:
             --app "$ASC_APP_ID" \
             --ipa "$RUNNER_TEMP/OttamExport/Ottam.ipa"
 
+      - name: Attach build to TestFlight beta group
+        if: steps.version.outputs.release == 'true'
+        env:
+          ASC_APP_ID: "6800990054"
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_PRIVATE_KEY_B64: ${{ secrets.ASC_PRIVATE_KEY_B64 }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          asc builds wait \
+            --app "$ASC_APP_ID" \
+            --latest \
+            --version "${{ steps.version.outputs.marketing }}" \
+            --platform IOS \
+            --timeout 12m \
+            --poll-interval 15s
+          build_id="$(asc builds list --app "$ASC_APP_ID" --platform IOS --version "${{ steps.version.outputs.marketing }}" --output json | jq -r '.data[0].id')"
+          if [[ -z "$build_id" ]]; then
+            echo "Could not resolve the uploaded build ID." >&2
+            exit 1
+          fi
+          group_id="$(asc testflight groups list --app "$ASC_APP_ID" --output json | jq -r '.data[] | select(.attributes.name == "Ottam Testers") | .id' | head -1)"
+          if [[ -z "$group_id" ]]; then
+            echo "Ottam Testers beta group not found." >&2
+            exit 1
+          fi
+          asc builds add-groups --build-id "$build_id" --group "$group_id"
+          asc builds test-notes update \
+            --build-id "$build_id" \
+            --locale en-US \
+            --whats-new "Ottam beta ${{ steps.version.outputs.marketing }}: walk or run a story, download episodes for offline playback, and resume exactly where you left off."
+          {
+            echo "build-id=$build_id"
+            echo "beta-group-id=$group_id"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Release summary
         if: steps.version.outputs.release == 'true'
         run: |
